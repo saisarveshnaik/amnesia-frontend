@@ -15,6 +15,7 @@ const inputClassName =
 
 function Navbar({ logo, githubIcon, langIcon, chevronDown }: NavbarProps) {
   const navItems = ['Products', 'Downloads', 'Partners', 'Blog', 'About us', 'Documentation']
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false)
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null)
@@ -79,7 +80,25 @@ function Navbar({ logo, githubIcon, langIcon, chevronDown }: NavbarProps) {
     }
   }, [isLoginModalOpen, isRegisterModalOpen])
 
+  useEffect(() => {
+    if (!isMobileMenuOpen) {
+      return
+    }
+
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsMobileMenuOpen(false)
+      }
+    }
+
+    window.addEventListener('keydown', handleEsc)
+    return () => {
+      window.removeEventListener('keydown', handleEsc)
+    }
+  }, [isMobileMenuOpen])
+
   const openLoginModal = () => {
+    setIsMobileMenuOpen(false)
     setRegisterError('')
     setLoginError('')
     setIsRegisterModalOpen(false)
@@ -87,6 +106,7 @@ function Navbar({ logo, githubIcon, langIcon, chevronDown }: NavbarProps) {
   }
 
   const openRegisterModal = () => {
+    setIsMobileMenuOpen(false)
     setLoginError('')
     setLoginInfo('')
     setRegisterError('')
@@ -176,6 +196,7 @@ function Navbar({ logo, githubIcon, langIcon, chevronDown }: NavbarProps) {
   }
 
   const handleLogout = () => {
+    setIsMobileMenuOpen(false)
     localStorage.removeItem(AUTH_TOKEN_KEY)
     localStorage.removeItem(AUTH_USER_KEY)
     setCurrentUser(null)
@@ -202,7 +223,7 @@ function Navbar({ logo, githubIcon, langIcon, chevronDown }: NavbarProps) {
             ))}
           </nav>
 
-          <div className="flex items-center gap-2 md:gap-3">
+          <div className="hidden items-center gap-2 md:gap-3 lg:flex">
             {currentUser ? (
               <>
                 <span className="inline-flex max-w-[130px] truncate rounded-[10px] border border-[#243044] bg-[#0c1422] px-3 py-2 text-[14px] font-medium text-[#f2f4f8]">
@@ -249,15 +270,83 @@ function Navbar({ logo, githubIcon, langIcon, chevronDown }: NavbarProps) {
               <img src={langIcon} alt="" className="h-[18px] w-[18px]" />
               <img src={chevronDown} alt="" className="h-[14px] w-[14px]" />
             </button>
-            <button
-              type="button"
-              className="inline-flex rounded p-1 text-[#e6e8ed] transition-colors hover:text-white lg:hidden"
-              aria-label="Open menu"
-            >
-              <Menu className="h-6 w-6" />
-            </button>
           </div>
+
+          <button
+            type="button"
+            className="inline-flex rounded p-1 text-[#e6e8ed] transition-colors hover:text-white lg:hidden"
+            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={isMobileMenuOpen}
+            onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+          >
+            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
         </div>
+
+        {isMobileMenuOpen ? (
+          <div className="border-t border-[#111725] px-[15px] py-4 md:px-[30px] lg:hidden">
+            <nav className="flex flex-col">
+              {navItems.map((item, index) => (
+                <a
+                  key={item}
+                  href="#"
+                  className="inline-flex items-center justify-between border-b border-[#111725] py-3 text-[16px] font-medium text-[#f2f3f6] transition-colors hover:text-[#f1b162]"
+                >
+                  <span>{item}</span>
+                  {index === 0 ? <img src={chevronDown} alt="" className="h-4 w-4 opacity-80" /> : null}
+                </a>
+              ))}
+            </nav>
+
+            <div className="mt-4 flex items-center gap-4 text-[#dde0e7]">
+              <button type="button" aria-label="Open GitHub" className="inline-flex rounded p-1 transition-colors hover:text-white">
+                <img src={githubIcon} alt="" className="h-[18px] w-[18px]" />
+              </button>
+              <button
+                type="button"
+                aria-label="Select language"
+                className="inline-flex items-center gap-1 rounded p-1 transition-colors hover:text-white"
+              >
+                <img src={langIcon} alt="" className="h-[18px] w-[18px]" />
+                <img src={chevronDown} alt="" className="h-[14px] w-[14px]" />
+              </button>
+            </div>
+
+            <div className="mt-4">
+              {currentUser ? (
+                <div className="space-y-2">
+                  <span className="inline-flex w-full truncate rounded-[10px] border border-[#243044] bg-[#0c1422] px-3 py-2 text-[14px] font-medium text-[#f2f4f8]">
+                    {currentUser.name}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="w-full rounded-[10px] border border-[#2b3547] px-3 py-2 text-[14px] font-semibold text-[#e4e8ef] transition hover:border-[#f1b162] hover:text-[#f1b162]"
+                  >
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={openLoginModal}
+                    className="rounded-[10px] border border-[#2b3547] px-3 py-2 text-[14px] font-semibold text-[#e4e8ef] transition hover:border-[#f1b162] hover:text-[#f1b162]"
+                  >
+                    Login
+                  </button>
+                  <button
+                    type="button"
+                    onClick={openRegisterModal}
+                    className="rounded-[10px] bg-[#f3ad62] px-3 py-2 text-[14px] font-bold text-[#21180d] shadow-[0_4px_18px_rgba(243,173,98,0.3)] transition hover:bg-[#ffc27b]"
+                  >
+                    Register
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        ) : null}
       </header>
 
       {isLoginModalOpen ? (

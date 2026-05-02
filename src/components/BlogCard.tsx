@@ -14,14 +14,14 @@ function BlogCard({ title, tags, date, readingTime, image, imageAlt, compact = f
   return (
     <article
       className={`rounded-[22px] border border-[#1b2231] bg-[#171d2a] ${
-        compact ? 'grid grid-cols-[1fr_auto] items-center gap-5 p-6 md:p-7' : 'grid md:grid-cols-[1.45fr_2fr]'
+        compact ? 'grid grid-cols-[1fr_auto] items-center gap-3 p-4 sm:gap-5 sm:p-6 md:p-7' : 'grid md:grid-cols-[1.45fr_2fr]'
       }`}
     >
       {!compact ? (
-        <img src={image} alt={imageAlt} className="h-full w-full rounded-l-[22px] object-cover" />
+        <img src={image} alt={imageAlt} className="h-full w-full rounded-t-[22px] object-cover md:rounded-l-[22px] md:rounded-tr-none" />
       ) : null}
 
-      <div className={compact ? '' : 'p-7 md:p-8'}>
+      <div className={compact ? '' : 'p-5 sm:p-6 md:p-8'}>
         <div className="flex flex-wrap gap-2">
           {tags.map((tag) => (
             <span
@@ -36,11 +36,15 @@ function BlogCard({ title, tags, date, readingTime, image, imageAlt, compact = f
             </span>
           ))}
         </div>
-        <h3 className={`mt-5 font-bold leading-[1.14] text-[#e6e8ee] ${compact ? 'text-[24px]' : 'text-[26px] md:text-[40px]'}`}>
+        <h3
+          className={`mt-4 font-bold leading-[1.14] text-[#e6e8ee] ${
+            compact ? 'text-[19px] sm:text-[22px] md:text-[24px]' : 'text-[24px] sm:text-[28px] md:text-[40px]'
+          }`}
+        >
           {title}
         </h3>
         {date && readingTime ? (
-          <div className="mt-5 flex items-center gap-5 text-[13px] text-[#8f97a5]">
+          <div className="mt-4 flex flex-wrap items-center gap-3 text-[13px] text-[#8f97a5] sm:mt-5 sm:gap-5">
             <span className="inline-flex items-center gap-1.5">
               <Calendar className="h-3.5 w-3.5" />
               {date}
@@ -53,7 +57,7 @@ function BlogCard({ title, tags, date, readingTime, image, imageAlt, compact = f
         ) : null}
       </div>
 
-      {compact ? <img src={image} alt={imageAlt} className="h-[90px] w-[90px] rounded-2xl object-cover" /> : null}
+      {compact ? <img src={image} alt={imageAlt} className="h-[74px] w-[74px] rounded-2xl object-cover sm:h-[90px] sm:w-[90px]" /> : null}
     </article>
   )
 }

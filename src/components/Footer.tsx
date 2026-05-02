@@ -8,17 +8,17 @@ type FooterProps = {
 }
 
 function Footer({ logo, googlePlay, appStore }: FooterProps) {
-  const footerLinkClass = 'text-[18px] font-medium text-[#f6b45e] transition-colors hover:text-[#ffc987]'
+  const footerLinkClass = 'text-[16px] font-medium leading-[1.45] text-[#f6b45e] transition-colors hover:text-[#ffc987] md:text-[18px]'
 
   return (
-    <footer className="border-t border-[#141c2b] pt-14 text-[#d7dae1]">
-      <div className="grid gap-10 border-b border-[#141c2b] pb-10 md:grid-cols-[1.15fr_1fr_1fr_1.25fr]">
+    <footer className="border-t border-[#141c2b] pt-10 text-[#d7dae1] md:pt-14">
+      <div className="grid gap-8 border-b border-[#141c2b] pb-8 sm:grid-cols-2 md:gap-10 md:pb-10 lg:grid-cols-[1.15fr_1fr_1fr_1.25fr]">
         <div>
-          <img src={logo} alt="Amnezia" className="h-[92px] w-auto md:h-[120px]" />
+          <img src={logo} alt="Amnezia" className="h-[74px] w-auto sm:h-[92px] md:h-[120px]" />
         </div>
 
         <div>
-          <h4 className="text-[18px] font-semibold uppercase tracking-[0.06em] text-[#d5d9e0]">PRODUCTS</h4>
+          <h4 className="text-[16px] font-semibold uppercase tracking-[0.06em] text-[#d5d9e0] md:text-[18px]">PRODUCTS</h4>
           <ul className="mt-3 space-y-2">
             <li><a className={footerLinkClass} href="#">Amnezia Premium</a></li>
             <li><a className={footerLinkClass} href="#">Amnezia Free</a></li>
@@ -28,7 +28,7 @@ function Footer({ logo, googlePlay, appStore }: FooterProps) {
         </div>
 
         <div>
-          <h4 className="text-[18px] font-semibold uppercase tracking-[0.06em] text-[#d5d9e0]">AMNEZIA</h4>
+          <h4 className="text-[16px] font-semibold uppercase tracking-[0.06em] text-[#d5d9e0] md:text-[18px]">AMNEZIA</h4>
           <ul className="mt-3 space-y-2">
             <li><a className={footerLinkClass} href="#">AmneziaWG</a></li>
             <li><a className={footerLinkClass} href="#">About us</a></li>
@@ -38,8 +38,8 @@ function Footer({ logo, googlePlay, appStore }: FooterProps) {
         </div>
 
         <div>
-          <h4 className="text-[18px] font-semibold uppercase tracking-[0.06em] text-[#d5d9e0]">CONTACTS</h4>
-          <div className="mt-3 flex flex-wrap items-center gap-3 text-[#e4e7ed] text-[18px]">
+          <h4 className="text-[16px] font-semibold uppercase tracking-[0.06em] text-[#d5d9e0] md:text-[18px]">CONTACTS</h4>
+          <div className="mt-3 flex flex-wrap items-center gap-3 text-[18px] text-[#e4e7ed]">
             <a href="#" aria-label="Telegram"><FaTelegramPlane /></a>
             <a href="#" aria-label="Reddit"><FaRedditAlien /></a>
             <a href="#" aria-label="Discord"><FaDiscord /></a>
@@ -49,22 +49,22 @@ function Footer({ logo, googlePlay, appStore }: FooterProps) {
             <a href="#" aria-label="X"><FaXTwitter /></a>
           </div>
           <div className="mt-3 space-y-1">
-            <p className="text-[18px] font-medium text-[#f6b45e]">partners@amnezia.org</p>
-            <p className="text-[18px] font-medium text-[#f6b45e]">support@amnezia.org</p>
+            <p className="break-all text-[16px] font-medium text-[#f6b45e] md:text-[18px]">partners@amnezia.org</p>
+            <p className="break-all text-[16px] font-medium text-[#f6b45e] md:text-[18px]">support@amnezia.org</p>
           </div>
         </div>
       </div>
 
-      <div className="border-b border-[#141c2b] py-8">
-        <h4 className="text-[18px] font-semibold uppercase tracking-[0.06em] text-[#d5d9e0]">DOWNLOAD AMNEZIA VPN</h4>
+      <div className="border-b border-[#141c2b] py-7 md:py-8">
+        <h4 className="text-[16px] font-semibold uppercase tracking-[0.06em] text-[#d5d9e0] md:text-[18px]">DOWNLOAD AMNEZIA VPN</h4>
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <img src={googlePlay} alt="Get it on Google Play" className="h-[35px] w-auto md:h-[42px]" />
           <img src={appStore} alt="Download on the App Store" className="h-[35px] w-auto md:h-[42px]" />
-          <a href="#" className="text-[18px] font-medium text-[#f6b45e]">All download options</a>
+          <a href="#" className="text-[16px] font-medium text-[#f6b45e] md:text-[18px]">All download options</a>
         </div>
       </div>
 
-      <div className="space-y-4 py-8 text-center text-[12px] text-[#7f8899] md:text-[14px]">
+      <div className="space-y-3 py-6 text-center text-[11px] text-[#7f8899] sm:text-[12px] md:space-y-4 md:py-8 md:text-[14px]">
         <p>Privacy and Acceptable Use Policy</p>
         <p>Payment and Terms of Use Policy</p>
         <p>(c) 2026 Amnezia. All rights reserved. EUPHORIATECH LIMITED Address: Akropoleos, 82 2nd floor 2012, Nicosia, Cyprus Reg number HE 484287</p>

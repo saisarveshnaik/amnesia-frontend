@@ -194,7 +194,7 @@ function App() {
 
       <Hero image={heroImage} arrowRight={arrowRight} />
 
-      <main className="mx-auto w-full max-w-[2200px] px-[15px] pb-12 pt-14 md:px-[30px] md:pt-20 xl:px-[70px]">
+      <main className="mx-auto w-full max-w-[2200px] px-[15px] pb-12 pt-10 sm:px-5 md:px-[30px] md:pt-20 xl:px-[70px]">
         <section>
           <SectionHeading label="OUR PRODUCTS" />
           <div className="mt-8 grid gap-4 lg:grid-cols-2">
@@ -242,38 +242,38 @@ function App() {
             />
           </div>
 
-          <div className="mt-6 rounded-[20px] border border-[#192331] bg-[#050910] px-7 py-8 md:px-12 md:py-12">
+          <div className="mt-6 rounded-[20px] border border-[#192331] bg-[#050910] px-5 py-6 sm:px-7 sm:py-8 md:px-12 md:py-12">
             <div className="mx-auto flex max-w-[680px] flex-col items-center text-center">
-              <img src={logoSymbol} alt="Amnezia symbol" className="h-20 w-20 md:h-24 md:w-24" />
-              <h3 className="mt-5 text-[48px] font-bold leading-[1.04] text-[#ebedf2]">Amnezia Self-hosted</h3>
-              <p className="mt-4 text-[20px] leading-[1.5] text-[#9ba4b2] md:text-[22px] lg:text-[24px]">
+              <img src={logoSymbol} alt="Amnezia symbol" className="h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24" />
+              <h3 className="mt-4 text-[32px] font-bold leading-[1.06] text-[#ebedf2] sm:mt-5 sm:text-[40px] md:text-[48px]">Amnezia Self-hosted</h3>
+              <p className="mt-3 text-[17px] leading-[1.5] text-[#9ba4b2] sm:mt-4 sm:text-[20px] md:text-[22px] lg:text-[24px]">
                 Service for creating your own VPN on your own server
               </p>
-              <div className="mt-8 flex items-center gap-6">
+              <div className="mt-7 flex w-full flex-col items-center gap-3 sm:mt-8 sm:w-auto sm:flex-row sm:gap-6">
                 <button
                   type="button"
-                  className="inline-flex h-12 min-w-36 items-center justify-center rounded-[12px] border border-[#f4ad61] text-[20px] font-bold text-[#f4ad61] transition hover:bg-[#f4ad61]/10"
+                  className="inline-flex h-11 w-full items-center justify-center rounded-[12px] border border-[#f4ad61] px-6 text-[18px] font-bold text-[#f4ad61] transition hover:bg-[#f4ad61]/10 sm:h-12 sm:w-auto sm:min-w-36 sm:text-[20px]"
                 >
                   Get
                 </button>
-                <span className="text-[20px] text-[#9ea6b4] md:text-[22px]">0 $ /month</span>
+                <span className="text-[18px] text-[#9ea6b4] sm:text-[20px] md:text-[22px]">0 $ /month</span>
               </div>
             </div>
 
-            <div className="mt-9 grid gap-4 border-t border-[#1a2434] pt-7 md:grid-cols-4">
-              <div className="flex items-start gap-3 text-[17px] text-[#d8dce5] md:gap-5 md:text-[20px]">
+            <div className="mt-7 grid gap-4 border-t border-[#1a2434] pt-6 sm:mt-9 sm:pt-7 md:grid-cols-2 xl:grid-cols-4">
+              <div className="flex items-start gap-3 text-[16px] text-[#d8dce5] sm:text-[17px] md:gap-5 md:text-[20px]">
                 <Workflow className="mt-0.5 h-6 w-6 md:h-[30px] md:w-[30px]" />
                 <span>Support for 8 protocols, including AmneziaWG and Xray</span>
               </div>
-              <div className="flex items-start gap-3 text-[17px] text-[#d8dce5] md:gap-5 md:text-[20px]">
+              <div className="flex items-start gap-3 text-[16px] text-[#d8dce5] sm:text-[17px] md:gap-5 md:text-[20px]">
                 <Workflow className="mt-0.5 h-6 w-6 md:h-[30px] md:w-[30px]" />
                 <span>Split tunneling</span>
               </div>
-              <div className="flex items-start gap-3 text-[17px] text-[#d8dce5] md:gap-5 md:text-[20px]">
+              <div className="flex items-start gap-3 text-[16px] text-[#d8dce5] sm:text-[17px] md:gap-5 md:text-[20px]">
                 <CodeXml className="mt-0.5 h-6 w-6 md:h-[30px] md:w-[30px]" />
                 <span>Open source</span>
               </div>
-              <div className="flex items-start gap-3 text-[17px] text-[#d8dce5] md:gap-5 md:text-[20px]">
+              <div className="flex items-start gap-3 text-[16px] text-[#d8dce5] sm:text-[17px] md:gap-5 md:text-[20px]">
                 <Shield className="mt-0.5 h-6 w-6 md:h-[30px] md:w-[30px]" />
                 <span>KillSwitch feature</span>
               </div>
@@ -281,26 +281,26 @@ function App() {
           </div>
 
           <div className="mt-6 grid overflow-hidden rounded-[20px] border border-[#192331] bg-[#050910] lg:grid-cols-[1fr_1.15fr]">
-            <div className="p-8 md:p-12">
-              <h3 className="text-[26px] font-bold text-[#f0f2f6] md:text-[32px]">
+            <div className="p-5 sm:p-6 md:p-12">
+              <h3 className="text-[24px] font-bold text-[#f0f2f6] md:text-[32px]">
                 Amnezia <span className="text-[#0067ff]">Business</span>
               </h3>
-              <p className="mt-4 text-[20px] leading-[1.4] text-[#9ca4b2] md:text-[22px] lg:text-[24px]">
+              <p className="mt-4 text-[17px] leading-[1.45] text-[#9ca4b2] sm:text-[20px] md:text-[22px] lg:text-[24px]">
                 We'll set up a fast and stable VPN for your company's employees
               </p>
-              <div className="mt-10 flex items-center gap-5">
+              <div className="mt-7 flex flex-col items-start gap-3 sm:mt-10 sm:flex-row sm:items-center sm:gap-5">
                 <button
                   type="button"
-                  className="inline-flex h-12 min-w-36 items-center justify-center rounded-[12px] border border-[#f4ad61] text-[20px] font-bold text-[#f4ad61] transition hover:bg-[#f4ad61]/10"
+                  className="inline-flex h-11 w-full items-center justify-center rounded-[12px] border border-[#f4ad61] px-6 text-[18px] font-bold text-[#f4ad61] transition hover:bg-[#f4ad61]/10 sm:h-12 sm:w-auto sm:min-w-36 sm:text-[20px]"
                 >
                   Get
                 </button>
-                <span className="text-[20px] text-[#9ea6b4] md:text-[22px]">8$ month per user</span>
+                <span className="text-[18px] text-[#9ea6b4] sm:text-[20px] md:text-[22px]">8$ month per user</span>
               </div>
             </div>
             <div className="relative">
               <img src={businessImage} alt="Business workspace" className="h-full w-full object-cover" />
-              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,#050910_0%,transparent_45%)]" />
+              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,#050910_0%,transparent_42%)] lg:bg-[linear-gradient(90deg,#050910_0%,transparent_45%)]" />
             </div>
           </div>
         </section>
@@ -308,26 +308,26 @@ function App() {
         <section className="mt-20">
           <SectionHeading label="NEWS & PROMOTIONS" />
           <div className="mt-8 grid gap-4 md:grid-cols-3">
-            <article className="rounded-[20px] border border-[#1a2433] bg-[#171d29] p-8">
-              <img src={change50Image} alt="50 percent discount" className="w-[72%] object-contain" />
-              <h3 className="mt-8 text-[22px] font-medium leading-[1.2] text-[#edf0f5] md:text-[24px] lg:text-[28px]">Bought another VPN and it stopped working?</h3>
-              <p className="mt-4 text-[20px] leading-[1.5] text-[#98a0af] md:text-[22px]">Switch to Amnezia Premium with a 50% discount</p>
+            <article className="rounded-[20px] border border-[#1a2433] bg-[#171d29] p-5 sm:p-6 md:p-8">
+              <img src={change50Image} alt="50 percent discount" className="w-[72%] max-w-[240px] object-contain" />
+              <h3 className="mt-6 text-[20px] font-medium leading-[1.2] text-[#edf0f5] sm:text-[22px] md:mt-8 md:text-[24px] lg:text-[28px]">Bought another VPN and it stopped working?</h3>
+              <p className="mt-4 text-[16px] leading-[1.5] text-[#98a0af] sm:text-[18px] md:text-[22px]">Switch to Amnezia Premium with a 50% discount</p>
               <button type="button" className="mt-8 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#2d333f]">
                 <img src={chevronRight} alt="" className="h-5 w-5" />
               </button>
             </article>
 
-            <article className="rounded-[20px] border border-[#1a2433] bg-[#050910] p-8">
+            <article className="rounded-[20px] border border-[#1a2433] bg-[#050910] p-5 sm:p-6 md:p-8">
               <div className="grid w-[140px] grid-cols-2 gap-2 md:w-[180px]">
                 <img src={flagKR} alt="Korea" className="h-[30px] w-[42px] rounded-sm object-cover md:h-[44px] md:w-[62px]" />
                 <img src={flagEE} alt="Estonia" className="h-[30px] w-[42px] rounded-sm object-cover md:h-[44px] md:w-[62px]" />
                 <img src={flagAE} alt="UAE" className="h-[30px] w-[42px] rounded-sm object-cover md:h-[44px] md:w-[62px]" />
                 <img src={flagPT} alt="Portugal" className="h-[30px] w-[42px] rounded-sm object-cover md:h-[44px] md:w-[62px]" />
               </div>
-              <h3 className="mt-8 text-[22px] font-medium leading-[1.2] text-[#edf0f5] md:text-[24px] lg:text-[28px]">
+              <h3 className="mt-6 text-[20px] font-medium leading-[1.2] text-[#edf0f5] sm:text-[22px] md:mt-8 md:text-[24px] lg:text-[28px]">
                 New locations in Amnezia <span className="text-[#df138f]">Premium</span>
               </h3>
-              <p className="mt-4 text-[20px] leading-[1.5] text-[#98a0af] md:text-[22px]">
+              <p className="mt-4 text-[16px] leading-[1.5] text-[#98a0af] sm:text-[18px] md:text-[22px]">
                 Connect to premium servers in Portugal, Estonia, South Korea, and UAE with maximum speed and security.
               </p>
               <button type="button" className="mt-8 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#2d333f]">
@@ -335,10 +335,10 @@ function App() {
               </button>
             </article>
 
-            <article className="rounded-[20px] border border-[#1a2433] bg-[#050910] p-8">
-              <img src={wgV2Image} alt="AmneziaWG v2.0" className="w-[88%] object-contain" />
-              <h3 className="mt-8 text-[22px] font-medium leading-[1.2] text-[#edf0f5] md:text-[24px] lg:text-[28px]">Updated AmneziaWG 2.0 Protocol</h3>
-              <p className="mt-4 text-[20px] leading-[1.5] text-[#98a0af] md:text-[22px]">
+            <article className="rounded-[20px] border border-[#1a2433] bg-[#050910] p-5 sm:p-6 md:p-8">
+              <img src={wgV2Image} alt="AmneziaWG v2.0" className="w-[88%] max-w-[280px] object-contain" />
+              <h3 className="mt-6 text-[20px] font-medium leading-[1.2] text-[#edf0f5] sm:text-[22px] md:mt-8 md:text-[24px] lg:text-[28px]">Updated AmneziaWG 2.0 Protocol</h3>
+              <p className="mt-4 text-[16px] leading-[1.5] text-[#98a0af] sm:text-[18px] md:text-[22px]">
                 Next-level VPN obfuscation against DPI - maximum protection and performance.
               </p>
               <button type="button" className="mt-8 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#2d333f]">
@@ -351,8 +351,8 @@ function App() {
         <section className="mt-20 grid items-center gap-12 lg:grid-cols-[0.9fr_1fr]">
           <div className="relative mx-auto">
             <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle,rgba(22,75,255,0.28),transparent_70%)] blur-2xl" />
-            <img src={phonePromoImage} alt="Amnezia app screen" className="relative mx-auto w-[240px] md:w-[420px]" />
-            <div className="mt-4 flex items-center justify-center gap-2 text-[#c8832c] text-[18px]">
+            <img src={phonePromoImage} alt="Amnezia app screen" className="relative mx-auto w-[220px] sm:w-[280px] md:w-[420px]" />
+            <div className="mt-4 flex items-center justify-center gap-2 text-[18px] text-[#c8832c]">
               <FaWindows />
               <FaApple />
               <FaLinux />
@@ -361,13 +361,13 @@ function App() {
             </div>
           </div>
           <div>
-            <h3 className="text-[32px] font-bold leading-[1.1] text-[#eceef3] md:text-[40px]">All services in one app</h3>
-            <p className="mt-6 max-w-[680px] text-[17px] leading-[1.5] text-[#9ea6b4] md:text-[20px]">
+            <h3 className="text-[28px] font-bold leading-[1.1] text-[#eceef3] sm:text-[32px] md:text-[40px]">All services in one app</h3>
+            <p className="mt-5 max-w-[680px] text-[16px] leading-[1.5] text-[#9ea6b4] sm:text-[17px] md:mt-6 md:text-[20px]">
               With AmneziaVPN, you can create a self-hosted VPN on your own server, connect to our classic VPN - Amnezia Premium, or get free access to blocked websites with the Amnezia Free service.
             </p>
             <button
               type="button"
-              className="mt-8 inline-flex h-14 min-w-44 items-center justify-center rounded-[14px] bg-[#f3ad62] px-8 text-[20px] font-bold text-[#21180d] shadow-[0_6px_24px_rgba(255,170,84,0.28)] transition hover:bg-[#ffc27b]"
+              className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-[14px] bg-[#f3ad62] px-6 text-[18px] font-bold text-[#21180d] shadow-[0_6px_24px_rgba(255,170,84,0.28)] transition hover:bg-[#ffc27b] sm:h-14 sm:w-auto sm:min-w-44 sm:px-8 sm:text-[20px]"
             >
               Download
             </button>
@@ -395,7 +395,7 @@ function App() {
             title="Amnezia Blog"
             align="left"
             action={
-              <a href="#" className="inline-flex items-center gap-2 text-[20px] font-semibold text-[#f3ab60] transition hover:text-[#ffc987]">
+              <a href="#" className="inline-flex items-center gap-2 text-[16px] font-semibold text-[#f3ab60] transition hover:text-[#ffc987] sm:text-[20px]">
                 All articles
                 <img src={arrowRight} alt="" className="h-6 w-6" />
               </a>
@@ -433,13 +433,11 @@ function App() {
           </div>
         </section>
 
-        <section className="mt-24 grid gap-6 border-t border-[#182130] pt-8 md:grid-cols-[1fr_2.2fr]">
-          <h2 className="text-[34px] font-extrabold leading-[1.05] tracking-[-0.01em] text-[#edf0f5] md:text-[48px]">
+        <section className="mt-20 grid gap-6 border-t border-[#182130] pt-8 md:mt-24 md:grid-cols-[1fr_2.2fr]">
+          <h2 className="text-[30px] font-extrabold leading-[1.08] tracking-[-0.01em] text-[#edf0f5] sm:text-[34px] md:text-[48px]">
             Frequently
-            <br />
-            Asked
-            <br />
-            Questions
+            <span className="md:block"> Asked</span>
+            <span className="md:block"> Questions</span>
           </h2>
           <div>
             {faqItems.map((item, index) => (
@@ -454,14 +452,14 @@ function App() {
           </div>
         </section>
 
-        <section className="mt-24 text-center">
-          <h2 className="text-[34px] font-extrabold text-[#e9ebf0] md:text-[48px]">They write about Amnezia</h2>
-          <div className="mt-12 grid items-center gap-8 md:grid-cols-5">
+        <section className="mt-20 text-center md:mt-24">
+          <h2 className="text-[30px] font-extrabold text-[#e9ebf0] sm:text-[34px] md:text-[48px]">They write about Amnezia</h2>
+          <div className="mt-10 grid grid-cols-2 items-center gap-6 sm:gap-8 md:mt-12 md:grid-cols-5">
             <img src={pressCybernews} alt="Cybernews" className="mx-auto h-8 w-auto md:h-12" />
             <img src={pressWired} alt="Wired" className="mx-auto h-8 w-auto md:h-12" />
             <img src={pressTechradar} alt="TechRadar" className="mx-auto h-8 w-auto md:h-12" />
             <img src={pressTf} alt="TorrentFreak" className="mx-auto h-8 w-auto md:h-12" />
-            <img src={pressMedianama} alt="Medianama" className="mx-auto h-8 w-auto md:h-10" />
+            <img src={pressMedianama} alt="Medianama" className="col-span-2 mx-auto h-8 w-auto md:col-span-1 md:h-10" />
           </div>
         </section>
 
