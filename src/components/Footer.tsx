@@ -60,7 +60,7 @@ function Footer({ logo, googlePlay, appStore }: FooterProps) {
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <img src={googlePlay} alt="Get it on Google Play" className="h-[35px] w-auto md:h-[42px]" />
           <img src={appStore} alt="Download on the App Store" className="h-[35px] w-auto md:h-[42px]" />
-          <a href="#" className="text-[16px] font-medium text-[#f6b45e] md:text-[18px]">All download options</a>
+          <a href="#downloads" className="text-[16px] font-medium text-[#f6b45e] md:text-[18px]">All download options</a>
         </div>
       </div>
 
@@ -74,4 +74,3 @@ function Footer({ logo, googlePlay, appStore }: FooterProps) {
 }
 
 export default Footer
-

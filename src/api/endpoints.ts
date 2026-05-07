@@ -2,7 +2,7 @@ const baseUrlFromEnv = import.meta.env.VITE_BASE_URL?.trim()
 
 export const BASE_URL = baseUrlFromEnv && baseUrlFromEnv.length > 0
   ? baseUrlFromEnv
-  : 'http://localhost:5000'
+  : 'http://localhost:5001'
 
 export const AUTH_ENDPOINTS = {
   register: `${BASE_URL}/api/auth/register`,

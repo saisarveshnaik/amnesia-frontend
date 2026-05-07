@@ -13,11 +13,20 @@ type NavbarProps = {
 const inputClassName =
   'mt-2 w-full rounded-[12px] border border-[#293244] bg-[#0b111d] px-4 py-3 text-[15px] text-[#ecf0f5] outline-none transition placeholder:text-[#7f8999] focus:border-[#f4ad61]'
 
+type AuthModalMode = 'login' | 'register'
+
 function Navbar({ logo, githubIcon, langIcon, chevronDown }: NavbarProps) {
-  const navItems = ['Products', 'Downloads', 'Partners', 'Blog', 'About us', 'Documentation']
+  const navItems = [
+    { label: 'Products', href: '#products', color: 'hover:text-[#ff4fa8]' },
+    { label: 'Promotions', href: '#promotions', color: 'hover:text-[#f3ad62]' },
+    { label: 'Downloads', href: '#downloads', color: 'hover:text-[#37d6a3]' },
+    { label: 'Security', href: '#security', color: 'hover:text-[#5aa8ff]' },
+    { label: 'Blog', href: '#blog', color: 'hover:text-[#c277ff]' },
+    { label: 'FAQ', href: '#faq', color: 'hover:text-[#f3ad62]' },
+    { label: 'Press', href: '#press', color: 'hover:text-[#37d6a3]' },
+  ]
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
-  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false)
+  const [authModalMode, setAuthModalMode] = useState<AuthModalMode | null>(null)
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null)
   const [isLoginLoading, setIsLoginLoading] = useState(false)
   const [isRegisterLoading, setIsRegisterLoading] = useState(false)
@@ -48,8 +57,7 @@ function Navbar({ logo, githubIcon, langIcon, chevronDown }: NavbarProps) {
     const handleOpenLogin = () => {
       setRegisterError('')
       setLoginError('')
-      setIsRegisterModalOpen(false)
-      setIsLoginModalOpen(true)
+      setAuthModalMode('login')
     }
 
     window.addEventListener('amnesia:open-login', handleOpenLogin)
@@ -60,16 +68,13 @@ function Navbar({ logo, githubIcon, langIcon, chevronDown }: NavbarProps) {
   }, [])
 
   useEffect(() => {
-    const isModalOpen = isLoginModalOpen || isRegisterModalOpen
-
-    if (!isModalOpen) {
+    if (!authModalMode) {
       return
     }
 
     const handleEsc = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        setIsLoginModalOpen(false)
-        setIsRegisterModalOpen(false)
+        setAuthModalMode(null)
       }
     }
 
@@ -78,7 +83,7 @@ function Navbar({ logo, githubIcon, langIcon, chevronDown }: NavbarProps) {
     return () => {
       window.removeEventListener('keydown', handleEsc)
     }
-  }, [isLoginModalOpen, isRegisterModalOpen])
+  }, [authModalMode])
 
   useEffect(() => {
     if (!isMobileMenuOpen) {
@@ -101,8 +106,7 @@ function Navbar({ logo, githubIcon, langIcon, chevronDown }: NavbarProps) {
     setIsMobileMenuOpen(false)
     setRegisterError('')
     setLoginError('')
-    setIsRegisterModalOpen(false)
-    setIsLoginModalOpen(true)
+    setAuthModalMode('login')
   }
 
   const openRegisterModal = () => {
@@ -110,8 +114,20 @@ function Navbar({ logo, githubIcon, langIcon, chevronDown }: NavbarProps) {
     setLoginError('')
     setLoginInfo('')
     setRegisterError('')
-    setIsLoginModalOpen(false)
-    setIsRegisterModalOpen(true)
+    setAuthModalMode('register')
+  }
+
+  const switchToRegister = () => {
+    setLoginError('')
+    setLoginInfo('')
+    setRegisterError('')
+    setAuthModalMode('register')
+  }
+
+  const switchToLogin = () => {
+    setRegisterError('')
+    setLoginError('')
+    setAuthModalMode('login')
   }
 
   const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
@@ -136,7 +152,7 @@ function Navbar({ logo, githubIcon, langIcon, chevronDown }: NavbarProps) {
       localStorage.setItem(AUTH_TOKEN_KEY, response.token)
       localStorage.setItem(AUTH_USER_KEY, JSON.stringify(response.user))
       setCurrentUser(response.user)
-      setIsLoginModalOpen(false)
+      setAuthModalMode(null)
       setLoginPassword('')
       setLoginError('')
       setLoginInfo('')
@@ -182,11 +198,10 @@ function Navbar({ logo, githubIcon, langIcon, chevronDown }: NavbarProps) {
       setRegisterEmail('')
       setRegisterPassword('')
       setRegisterConfirmPassword('')
-      setIsRegisterModalOpen(false)
       setLoginEmail(normalizedEmail)
       setLoginPassword('')
       setLoginInfo('Registration successful. Please login with your credentials.')
-      setIsLoginModalOpen(true)
+      setAuthModalMode('login')
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Registration failed. Please try again.'
       setRegisterError(message)
@@ -204,21 +219,20 @@ function Navbar({ logo, githubIcon, langIcon, chevronDown }: NavbarProps) {
 
   return (
     <>
-      <header className="border-b border-[#111725] bg-[#05080f]">
+      <header className="sticky top-0 z-40 border-b border-[#172235] bg-[#05080f]/88 shadow-[0_12px_40px_rgba(0,0,0,0.22)] backdrop-blur-xl">
         <div className="mx-auto flex h-16 w-full max-w-[2200px] items-center justify-between px-[15px] md:px-[30px] xl:px-[70px]">
-          <a href="#" className="inline-flex items-center">
+          <a href="#home" className="inline-flex items-center">
             <img src={logo} alt="Amnezia" className="h-[28px] w-auto" />
           </a>
 
-          <nav className="hidden items-center gap-8 lg:flex">
-            {navItems.map((item, index) => (
+          <nav className="hidden items-center gap-1 rounded-full border border-[#162033] bg-[#07101c]/82 px-2 py-1 xl:flex">
+            {navItems.map((item) => (
               <a
-                key={item}
-                href="#"
-                className="inline-flex items-center gap-1 text-[16px] font-medium text-[#f2f3f6] transition-colors hover:text-[#f1b162]"
+                key={item.href}
+                href={item.href}
+                className={`inline-flex h-9 items-center rounded-full px-3 text-[14px] font-semibold text-[#dfe5ef] transition-colors hover:bg-[#101a2b] ${item.color}`}
               >
-                <span>{item}</span>
-                {index === 0 ? <img src={chevronDown} alt="" className="h-4 w-4 opacity-80" /> : null}
+                {item.label}
               </a>
             ))}
           </nav>
@@ -274,7 +288,7 @@ function Navbar({ logo, githubIcon, langIcon, chevronDown }: NavbarProps) {
 
           <button
             type="button"
-            className="inline-flex rounded p-1 text-[#e6e8ed] transition-colors hover:text-white lg:hidden"
+            className="inline-flex rounded p-1 text-[#e6e8ed] transition-colors hover:text-white xl:hidden"
             aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isMobileMenuOpen}
             onClick={() => setIsMobileMenuOpen((prev) => !prev)}
@@ -284,16 +298,16 @@ function Navbar({ logo, githubIcon, langIcon, chevronDown }: NavbarProps) {
         </div>
 
         {isMobileMenuOpen ? (
-          <div className="border-t border-[#111725] px-[15px] py-4 md:px-[30px] lg:hidden">
+          <div className="border-t border-[#111725] px-[15px] py-4 md:px-[30px] xl:hidden">
             <nav className="flex flex-col">
-              {navItems.map((item, index) => (
+              {navItems.map((item) => (
                 <a
-                  key={item}
-                  href="#"
-                  className="inline-flex items-center justify-between border-b border-[#111725] py-3 text-[16px] font-medium text-[#f2f3f6] transition-colors hover:text-[#f1b162]"
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`inline-flex items-center justify-between border-b border-[#111725] py-3 text-[16px] font-medium text-[#f2f3f6] transition-colors ${item.color}`}
                 >
-                  <span>{item}</span>
-                  {index === 0 ? <img src={chevronDown} alt="" className="h-4 w-4 opacity-80" /> : null}
+                  <span>{item.label}</span>
                 </a>
               ))}
             </nav>
@@ -349,135 +363,153 @@ function Navbar({ logo, githubIcon, langIcon, chevronDown }: NavbarProps) {
         ) : null}
       </header>
 
-      {isLoginModalOpen ? (
+      {authModalMode ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#02040a]/75 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-[460px] rounded-[20px] border border-[#1a2434] bg-[#050910] p-6 shadow-[0_24px_60px_rgba(0,0,0,0.45)] md:p-7">
-            <div className="flex items-center justify-between">
-              <h2 className="text-[28px] font-bold text-[#eef1f6]">Login</h2>
+          <div className="w-full max-w-[460px] overflow-hidden rounded-[20px] border border-[#1a2434] bg-[#050910] shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
+            <div className="flex items-center justify-between px-6 pt-6 md:px-7 md:pt-7">
+              <h2 className="text-[28px] font-bold text-[#eef1f6]">{authModalMode === 'login' ? 'Login' : 'Register'}</h2>
               <button
                 type="button"
-                aria-label="Close login modal"
-                onClick={() => setIsLoginModalOpen(false)}
+                aria-label="Close auth modal"
+                onClick={() => setAuthModalMode(null)}
                 className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[#aeb7c5] transition hover:bg-[#101827] hover:text-white"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            {loginInfo ? <p className="mt-4 rounded-lg border border-[#294134] bg-[#111f17] px-3 py-2 text-[14px] text-[#9ed7ae]">{loginInfo}</p> : null}
-            {loginError ? <p className="mt-4 rounded-lg border border-[#512733] bg-[#2a1219] px-3 py-2 text-[14px] text-[#ffb3c3]">{loginError}</p> : null}
+            <div className="px-6 pb-6 md:px-7 md:pb-7">
+              <div className="overflow-hidden">
+                <div
+                  className={`flex w-[200%] transition-transform duration-300 ease-out ${
+                    authModalMode === 'register' ? '-translate-x-1/2' : 'translate-x-0'
+                  }`}
+                >
+                  <div className="flex w-1/2 shrink-0 flex-col">
+                  {loginInfo ? <p className="mt-4 rounded-lg border border-[#294134] bg-[#111f17] px-3 py-2 text-[14px] text-[#9ed7ae]">{loginInfo}</p> : null}
+                  {loginError ? <p className="mt-4 rounded-lg border border-[#512733] bg-[#2a1219] px-3 py-2 text-[14px] text-[#ffb3c3]">{loginError}</p> : null}
 
-            <form className="mt-5 space-y-4" onSubmit={handleLogin}>
-              <label className="block text-[14px] font-medium text-[#d8dde7]">
-                Email
-                <input
-                  type="email"
-                  value={loginEmail}
-                  onChange={(event) => setLoginEmail(event.target.value)}
-                  className={inputClassName}
-                  placeholder="you@example.com"
-                  autoComplete="email"
-                />
-              </label>
+                  <form className="mt-5 space-y-4" onSubmit={handleLogin}>
+                    <label className="block text-[14px] font-medium text-[#d8dde7]">
+                      Email
+                      <input
+                        type="email"
+                        value={loginEmail}
+                        onChange={(event) => setLoginEmail(event.target.value)}
+                        className={inputClassName}
+                        placeholder="you@example.com"
+                        autoComplete="email"
+                      />
+                    </label>
 
-              <label className="block text-[14px] font-medium text-[#d8dde7]">
-                Password
-                <input
-                  type="password"
-                  value={loginPassword}
-                  onChange={(event) => setLoginPassword(event.target.value)}
-                  className={inputClassName}
-                  placeholder="Enter your password"
-                  autoComplete="current-password"
-                />
-              </label>
+                    <label className="block text-[14px] font-medium text-[#d8dde7]">
+                      Password
+                      <input
+                        type="password"
+                        value={loginPassword}
+                        onChange={(event) => setLoginPassword(event.target.value)}
+                        className={inputClassName}
+                        placeholder="Enter your password"
+                        autoComplete="current-password"
+                      />
+                    </label>
 
-              <button
-                type="submit"
-                disabled={isLoginLoading}
-                className="mt-2 inline-flex h-11 w-full items-center justify-center rounded-[12px] bg-[#f3ad62] text-[15px] font-bold text-[#21180d] transition hover:bg-[#ffc27b] disabled:cursor-not-allowed disabled:opacity-70"
-              >
-                {isLoginLoading ? 'Logging in...' : 'Login'}
-              </button>
-            </form>
-          </div>
-        </div>
-      ) : null}
+                    <button
+                      type="submit"
+                      disabled={isLoginLoading}
+                      className="mt-2 inline-flex h-11 w-full items-center justify-center rounded-[12px] bg-[#f3ad62] text-[15px] font-bold text-[#21180d] transition hover:bg-[#ffc27b] disabled:cursor-not-allowed disabled:opacity-70"
+                    >
+                      {isLoginLoading ? 'Logging in...' : 'Login'}
+                    </button>
+                  </form>
 
-      {isRegisterModalOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#02040a]/75 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-[460px] rounded-[20px] border border-[#1a2434] bg-[#050910] p-6 shadow-[0_24px_60px_rgba(0,0,0,0.45)] md:p-7">
-            <div className="flex items-center justify-between">
-              <h2 className="text-[28px] font-bold text-[#eef1f6]">Register</h2>
-              <button
-                type="button"
-                aria-label="Close register modal"
-                onClick={() => setIsRegisterModalOpen(false)}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[#aeb7c5] transition hover:bg-[#101827] hover:text-white"
-              >
-                <X className="h-5 w-5" />
-              </button>
+                  <p className="mt-auto pt-5 text-center text-[14px] text-[#aab3c2]">
+                    Not a user?{' '}
+                    <button
+                      type="button"
+                      onClick={switchToRegister}
+                      className="font-semibold text-[#f3ad62] transition hover:text-[#ffc27b]"
+                    >
+                      Register here
+                    </button>
+                  </p>
+                </div>
+
+                  <div className="flex w-1/2 shrink-0 flex-col">
+                  {registerError ? <p className="mt-4 rounded-lg border border-[#512733] bg-[#2a1219] px-3 py-2 text-[14px] text-[#ffb3c3]">{registerError}</p> : null}
+
+                  <form className="mt-5 space-y-4" onSubmit={handleRegister}>
+                    <label className="block text-[14px] font-medium text-[#d8dde7]">
+                      Name
+                      <input
+                        type="text"
+                        value={registerName}
+                        onChange={(event) => setRegisterName(event.target.value)}
+                        className={inputClassName}
+                        placeholder="Enter your name"
+                        autoComplete="name"
+                      />
+                    </label>
+
+                    <label className="block text-[14px] font-medium text-[#d8dde7]">
+                      Email
+                      <input
+                        type="email"
+                        value={registerEmail}
+                        onChange={(event) => setRegisterEmail(event.target.value)}
+                        className={inputClassName}
+                        placeholder="you@example.com"
+                        autoComplete="email"
+                      />
+                    </label>
+
+                    <label className="block text-[14px] font-medium text-[#d8dde7]">
+                      Password
+                      <input
+                        type="password"
+                        value={registerPassword}
+                        onChange={(event) => setRegisterPassword(event.target.value)}
+                        className={inputClassName}
+                        placeholder="At least 6 characters"
+                        autoComplete="new-password"
+                      />
+                    </label>
+
+                    <label className="block text-[14px] font-medium text-[#d8dde7]">
+                      Confirm Password
+                      <input
+                        type="password"
+                        value={registerConfirmPassword}
+                        onChange={(event) => setRegisterConfirmPassword(event.target.value)}
+                        className={inputClassName}
+                        placeholder="Re-enter your password"
+                        autoComplete="new-password"
+                      />
+                    </label>
+
+                    <button
+                      type="submit"
+                      disabled={isRegisterLoading}
+                      className="mt-2 inline-flex h-11 w-full items-center justify-center rounded-[12px] bg-[#f3ad62] text-[15px] font-bold text-[#21180d] transition hover:bg-[#ffc27b] disabled:cursor-not-allowed disabled:opacity-70"
+                    >
+                      {isRegisterLoading ? 'Creating account...' : 'Create account'}
+                    </button>
+                  </form>
+
+                  <p className="mt-auto pt-5 text-center text-[14px] text-[#aab3c2]">
+                    Already a user?{' '}
+                    <button
+                      type="button"
+                      onClick={switchToLogin}
+                      className="font-semibold text-[#f3ad62] transition hover:text-[#ffc27b]"
+                    >
+                      Login here
+                    </button>
+                  </p>
+                </div>
+                </div>
+              </div>
             </div>
-
-            {registerError ? <p className="mt-4 rounded-lg border border-[#512733] bg-[#2a1219] px-3 py-2 text-[14px] text-[#ffb3c3]">{registerError}</p> : null}
-
-            <form className="mt-5 space-y-4" onSubmit={handleRegister}>
-              <label className="block text-[14px] font-medium text-[#d8dde7]">
-                Name
-                <input
-                  type="text"
-                  value={registerName}
-                  onChange={(event) => setRegisterName(event.target.value)}
-                  className={inputClassName}
-                  placeholder="Enter your name"
-                  autoComplete="name"
-                />
-              </label>
-
-              <label className="block text-[14px] font-medium text-[#d8dde7]">
-                Email
-                <input
-                  type="email"
-                  value={registerEmail}
-                  onChange={(event) => setRegisterEmail(event.target.value)}
-                  className={inputClassName}
-                  placeholder="you@example.com"
-                  autoComplete="email"
-                />
-              </label>
-
-              <label className="block text-[14px] font-medium text-[#d8dde7]">
-                Password
-                <input
-                  type="password"
-                  value={registerPassword}
-                  onChange={(event) => setRegisterPassword(event.target.value)}
-                  className={inputClassName}
-                  placeholder="At least 6 characters"
-                  autoComplete="new-password"
-                />
-              </label>
-
-              <label className="block text-[14px] font-medium text-[#d8dde7]">
-                Confirm Password
-                <input
-                  type="password"
-                  value={registerConfirmPassword}
-                  onChange={(event) => setRegisterConfirmPassword(event.target.value)}
-                  className={inputClassName}
-                  placeholder="Re-enter your password"
-                  autoComplete="new-password"
-                />
-              </label>
-
-              <button
-                type="submit"
-                disabled={isRegisterLoading}
-                className="mt-2 inline-flex h-11 w-full items-center justify-center rounded-[12px] bg-[#f3ad62] text-[15px] font-bold text-[#21180d] transition hover:bg-[#ffc27b] disabled:cursor-not-allowed disabled:opacity-70"
-              >
-                {isRegisterLoading ? 'Creating account...' : 'Create account'}
-              </button>
-            </form>
           </div>
         </div>
       ) : null}

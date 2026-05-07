@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   Ban,
   CodeXml,
@@ -11,6 +11,7 @@ import {
   Smartphone,
   Tv,
   Workflow,
+  X,
 } from 'lucide-react'
 import { FaAndroid, FaApple, FaGithub, FaLinux, FaWindows } from 'react-icons/fa'
 import BlogCard from './components/BlogCard'
@@ -86,8 +87,10 @@ function App() {
   const [openedFaq, setOpenedFaq] = useState<number | null>(null)
   const [isPremiumPaymentLoading, setIsPremiumPaymentLoading] = useState(false)
   const [premiumPaymentError, setPremiumPaymentError] = useState('')
+  const [paymentCheckoutUrl, setPaymentCheckoutUrl] = useState('')
   const [vpnCode, setVpnCode] = useState('')
   const [isCopyingCode, setIsCopyingCode] = useState(false)
+  const paymentFlowIdRef = useRef(0)
   const currentPath = window.location.pathname.toLowerCase()
   const isPaymentReturnPage = currentPath === '/premium-payment-success' || currentPath === '/premium-payment-failure'
 
@@ -124,14 +127,17 @@ function App() {
 
     setPremiumPaymentError('')
     setIsPremiumPaymentLoading(true)
+    const flowId = paymentFlowIdRef.current + 1
+    paymentFlowIdRef.current = flowId
 
     try {
       const paymentData = await createPremiumPayment(token)
-      const checkoutWindow = window.open(paymentData.checkoutUrl, '_blank', 'noopener,noreferrer,width=460,height=720')
 
-      if (!checkoutWindow) {
-        throw new Error('Unable to open payment window. Please allow pop-ups and try again.')
+      if (paymentFlowIdRef.current !== flowId) {
+        return
       }
+
+      setPaymentCheckoutUrl(paymentData.checkoutUrl)
 
       const startTime = Date.now()
       const timeoutMs = 5 * 60 * 1000
@@ -141,12 +147,20 @@ function App() {
       while (Date.now() - startTime < timeoutMs) {
         await new Promise((resolve) => setTimeout(resolve, 4000))
 
+        if (paymentFlowIdRef.current !== flowId) {
+          return
+        }
+
         const statusData = await getPaymentStatus(token, paymentData.transactionId)
         latestStatus = statusData.status.toLowerCase()
 
         if (terminalStatuses.has(latestStatus)) {
           break
         }
+      }
+
+      if (paymentFlowIdRef.current !== flowId) {
+        return
       }
 
       if (latestStatus !== 'completed') {
@@ -159,13 +173,24 @@ function App() {
 
       const storedPayment = await storeCompletedPayment(token, paymentData.transactionId)
       setVpnCode(storedPayment.vpnCode)
-      checkoutWindow.close()
+      setPaymentCheckoutUrl('')
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unable to complete payment. Please try again.'
-      setPremiumPaymentError(message)
+      if (paymentFlowIdRef.current === flowId) {
+        const message = error instanceof Error ? error.message : 'Unable to complete payment. Please try again.'
+        setPremiumPaymentError(message)
+        setPaymentCheckoutUrl('')
+      }
     } finally {
-      setIsPremiumPaymentLoading(false)
+      if (paymentFlowIdRef.current === flowId) {
+        setIsPremiumPaymentLoading(false)
+      }
     }
+  }
+
+  const handleClosePaymentPopup = () => {
+    paymentFlowIdRef.current += 1
+    setPaymentCheckoutUrl('')
+    setIsPremiumPaymentLoading(false)
   }
 
   const handleCopyVpnCode = async () => {
@@ -195,7 +220,7 @@ function App() {
       <Hero image={heroImage} arrowRight={arrowRight} />
 
       <main className="mx-auto w-full max-w-[2200px] px-[15px] pb-12 pt-10 sm:px-5 md:px-[30px] md:pt-20 xl:px-[70px]">
-        <section>
+        <section id="products" className="scroll-mt-24">
           <SectionHeading label="OUR PRODUCTS" />
           <div className="mt-8 grid gap-4 lg:grid-cols-2">
             <ProductCard
@@ -305,7 +330,7 @@ function App() {
           </div>
         </section>
 
-        <section className="mt-20">
+        <section id="promotions" className="mt-20 scroll-mt-24">
           <SectionHeading label="NEWS & PROMOTIONS" />
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             <article className="rounded-[20px] border border-[#1a2433] bg-[#171d29] p-5 sm:p-6 md:p-8">
@@ -348,7 +373,7 @@ function App() {
           </div>
         </section>
 
-        <section className="mt-20 grid items-center gap-12 lg:grid-cols-[0.9fr_1fr]">
+        <section id="downloads" className="mt-20 grid scroll-mt-24 items-center gap-12 lg:grid-cols-[0.9fr_1fr]">
           <div className="relative mx-auto">
             <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle,rgba(22,75,255,0.28),transparent_70%)] blur-2xl" />
             <img src={phonePromoImage} alt="Amnezia app screen" className="relative mx-auto w-[220px] sm:w-[280px] md:w-[420px]" />
@@ -374,7 +399,7 @@ function App() {
           </div>
         </section>
 
-        <section className="mt-20 grid gap-4 md:grid-cols-2">
+        <section id="security" className="mt-20 grid scroll-mt-24 gap-4 md:grid-cols-2">
           <FeatureCard
             title="Works in countries with the highest level of internet censorship"
             description="The AmneziaWG protocol combines the speed and performance of the popular WireGuard protocol with additional protection against detection and blocking. The source code is available at Github"
@@ -390,12 +415,12 @@ function App() {
           />
         </section>
 
-        <section className="mt-20">
+        <section id="blog" className="mt-20 scroll-mt-24">
           <SectionHeading
             title="Amnezia Blog"
             align="left"
             action={
-              <a href="#" className="inline-flex items-center gap-2 text-[16px] font-semibold text-[#f3ab60] transition hover:text-[#ffc987] sm:text-[20px]">
+              <a href="#blog" className="inline-flex items-center gap-2 text-[16px] font-semibold text-[#f3ab60] transition hover:text-[#ffc987] sm:text-[20px]">
                 All articles
                 <img src={arrowRight} alt="" className="h-6 w-6" />
               </a>
@@ -433,7 +458,7 @@ function App() {
           </div>
         </section>
 
-        <section className="mt-20 grid gap-6 border-t border-[#182130] pt-8 md:mt-24 md:grid-cols-[1fr_2.2fr]">
+        <section id="faq" className="mt-20 grid scroll-mt-24 gap-6 border-t border-[#182130] pt-8 md:mt-24 md:grid-cols-[1fr_2.2fr]">
           <h2 className="text-[30px] font-extrabold leading-[1.08] tracking-[-0.01em] text-[#edf0f5] sm:text-[34px] md:text-[48px]">
             Frequently
             <span className="md:block"> Asked</span>
@@ -452,7 +477,7 @@ function App() {
           </div>
         </section>
 
-        <section className="mt-20 text-center md:mt-24">
+        <section id="press" className="mt-20 scroll-mt-24 text-center md:mt-24">
           <h2 className="text-[30px] font-extrabold text-[#e9ebf0] sm:text-[34px] md:text-[48px]">They write about Amnezia</h2>
           <div className="mt-10 grid grid-cols-2 items-center gap-6 sm:gap-8 md:mt-12 md:grid-cols-5">
             <img src={pressCybernews} alt="Cybernews" className="mx-auto h-8 w-auto md:h-12" />
@@ -472,10 +497,37 @@ function App() {
         </div>
       ) : null}
 
+      {paymentCheckoutUrl ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#02040a]/80 p-4 backdrop-blur-sm">
+          <div className="flex h-[min(760px,calc(100vh-32px))] w-full max-w-[480px] flex-col overflow-hidden rounded-[20px] border border-[#1a2434] bg-[#050910] shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
+            <div className="flex items-center justify-between border-b border-[#172234] px-4 py-3">
+              <div>
+                <h3 className="text-[18px] font-bold text-[#eef1f6]">Complete payment</h3>
+                <p className="mt-0.5 text-[13px] text-[#9ea7b6]">Amnezia Premium</p>
+              </div>
+              <button
+                type="button"
+                aria-label="Close payment popup"
+                onClick={handleClosePaymentPopup}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[#aeb7c5] transition hover:bg-[#101827] hover:text-white"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <iframe
+              src={paymentCheckoutUrl}
+              title="KiwiPayment checkout"
+              className="min-h-0 flex-1 border-0 bg-white"
+              allow="payment *"
+            />
+          </div>
+        </div>
+      ) : null}
+
       {vpnCode ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#02040a]/80 p-4 backdrop-blur-sm">
           <div className="w-full max-w-[460px] rounded-[20px] border border-[#1a2434] bg-[#050910] p-6 shadow-[0_24px_60px_rgba(0,0,0,0.45)] md:p-7">
-            <h3 className="text-[28px] font-bold text-[#eef1f6]">your vpn code</h3>
+            <h3 className="text-[28px] font-bold text-[#eef1f6]">Your VPN code</h3>
             <p className="mt-3 text-[15px] text-[#b8c1d1]">Use this code to activate your Amnezia Premium access.</p>
             <div className="mt-5 rounded-[12px] border border-[#243249] bg-[#0b111d] px-4 py-3 text-[20px] font-bold tracking-[0.04em] text-[#f4ad61]">
               {vpnCode}
@@ -507,4 +559,3 @@ function App() {
 }
 
 export default App
-
