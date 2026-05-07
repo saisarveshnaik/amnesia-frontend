@@ -1,4 +1,4 @@
-const baseUrlFromEnv = import.meta.env.VITE_BASE_URL?.trim()
+const baseUrlFromEnv = import.meta.env.VITE_API_URL?.trim()
 
 export const BASE_URL = baseUrlFromEnv && baseUrlFromEnv.length > 0
   ? baseUrlFromEnv
