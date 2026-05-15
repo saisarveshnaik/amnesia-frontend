@@ -52,8 +52,6 @@ import pressWired from '../assets/bd63430b-e92d-410c-8793-30615fd085a9.svg'
 import pressTechradar from '../assets/4b42cbad-69e9-46fe-b8ed-d877adec71a3.svg'
 import pressTf from '../assets/torrentfreak-preview.png'
 import pressMedianama from '../assets/medianama.3c495983.png'
-import googlePlayBadge from '../assets/dwn-play.png'
-import appStoreBadge from '../assets/dwn-app-store.png'
 
 const faqItems = [
   {
@@ -82,6 +80,48 @@ const faqItems = [
       'Self-hosted and advanced setups allow protocol choice, including AmneziaWG and Xray-based routes for custom scenarios.',
   },
 ]
+
+const staticPages = {
+  '/amneziawg': {
+    eyebrow: 'AMNEZIAWG',
+    title: 'AmneziaWG Protocol',
+    description:
+      'A high-performance VPN protocol built for restricted networks, combining WireGuard speed with additional traffic masking for stronger resistance to blocking.',
+    image: awgGlowImage,
+    imageAlt: 'AmneziaWG protocol',
+    highlights: [
+      'Fast encrypted tunnels for daily VPN use',
+      'Extra obfuscation against traffic inspection',
+      'Available in Amnezia Premium and self-hosted setups',
+    ],
+  },
+  '/about': {
+    eyebrow: 'ABOUT US',
+    title: 'Internet freedom has a name',
+    description:
+      'Amnezia helps people connect privately, bypass network restrictions, and create personal VPN infrastructure with clear controls and open-source technology.',
+    image: heroImage,
+    imageAlt: 'Amnezia app interface',
+    highlights: [
+      'Privacy-first VPN tools for individuals and teams',
+      'Self-hosted and managed VPN options',
+      'Focused on access, security, and practical reliability',
+    ],
+  },
+  '/premium-discount': {
+    eyebrow: 'SPECIAL OFFER',
+    title: 'Switch to Amnezia Premium with a 50% discount',
+    description:
+      'Move from a VPN that stopped working to Amnezia Premium and get fast regional routing, stronger protocols, and support for everyday private access.',
+    image: change50Image,
+    imageAlt: '50 percent discount',
+    highlights: [
+      'Premium VPN locations with high-speed access',
+      'Supports AmneziaWG and XRay VLESS Reality protocols',
+      'Built for reliable browsing in restricted networks',
+    ],
+  },
+}
 
 function App() {
   const [openedFaq, setOpenedFaq] = useState<number | null>(null)
@@ -112,6 +152,82 @@ function App() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#04070e] px-6 text-center text-[#d9deea]">
         <p className="text-[18px] md:text-[20px]">Payment processed. You can close this window.</p>
+      </div>
+    )
+  }
+
+  const staticPage = staticPages[currentPath as keyof typeof staticPages]
+
+  if (staticPage || currentPath === '/blog') {
+    return (
+      <div className="min-h-screen bg-[#04070e] text-white">
+        <Navbar
+          logo={logoMain}
+          githubIcon={githubIcon}
+          langIcon={languageIcon}
+          chevronDown={chevronDown}
+        />
+
+        <main className="mx-auto w-full max-w-[2200px] px-[15px] pb-12 pt-10 sm:px-5 md:px-[30px] md:pt-16 xl:px-[70px]">
+          {currentPath === '/blog' ? (
+            <section className="min-h-[58vh]">
+              <SectionHeading title="Amnezia Blog" align="left" />
+              <div className="mt-8">
+                <BlogCard
+                  title="Split tunneling: what it is and why you need it"
+                  tags={['Articles', 'Free']}
+                  image={blogFeatureImage}
+                  imageAlt="Split tunneling article"
+                />
+              </div>
+              <div className="mt-4 grid gap-4 md:grid-cols-2">
+                <BlogCard
+                  compact
+                  title="Internet Censorship in Iran: Trends and Outlook for 2026"
+                  tags={['Articles', 'Iran']}
+                  date="Apr 03"
+                  readingTime="5 min"
+                  image={blogIranImage}
+                  imageAlt="Iran article"
+                />
+                <BlogCard
+                  compact
+                  title="AmneziaWG 2.0 is here"
+                  tags={['Amnezia News', 'Recommended']}
+                  date="Mar 25"
+                  readingTime="2 min"
+                  image={blogAwgImage}
+                  imageAlt="AmneziaWG 2.0 article"
+                />
+              </div>
+            </section>
+          ) : (
+            <section className="grid min-h-[58vh] items-center gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+              <div>
+                <p className="text-[14px] font-bold uppercase tracking-[0.18em] text-[#f3ad62] md:text-[16px]">{staticPage.eyebrow}</p>
+                <h1 className="mt-4 max-w-[760px] text-[38px] font-extrabold leading-[1.08] text-[#eef1f6] sm:text-[48px] md:text-[64px]">
+                  {staticPage.title}
+                </h1>
+                <p className="mt-5 max-w-[720px] text-[17px] leading-[1.55] text-[#a8b1c0] sm:text-[19px] md:text-[22px]">
+                  {staticPage.description}
+                </p>
+                <ul className="mt-7 space-y-3 text-[16px] text-[#d8dde7] sm:text-[18px]">
+                  {staticPage.highlights.map((highlight) => (
+                    <li key={highlight} className="flex gap-3">
+                      <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#f3ad62]" />
+                      <span>{highlight}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="overflow-hidden rounded-[22px] border border-[#1a2434] bg-[#050910]">
+                <img src={staticPage.image} alt={staticPage.imageAlt} className="h-full max-h-[520px] w-full object-cover" />
+              </div>
+            </section>
+          )}
+
+          <Footer logo={logoMain} />
+        </main>
       </div>
     )
   }
@@ -223,51 +339,55 @@ function App() {
         <section id="products" className="scroll-mt-24">
           <SectionHeading label="OUR PRODUCTS" />
           <div className="mt-8 grid gap-4 lg:grid-cols-2">
-            <ProductCard
-              title="Amnezia"
-              accentWord="Premium"
-              accentClass="text-[#d10d90]"
-              subtitle="A classic VPN with strong privacy and region switching"
-              price="from 4.00 $ /month"
-              highlighted
-              onGet={handlePremiumGetClick}
-              isGetLoading={isPremiumPaymentLoading}
-              features={[
-                { icon: <Globe className="h-6 w-6 md:h-[30px] md:w-[30px]" />, text: 'Access to any sites and apps' },
-                { icon: <Download className="h-6 w-6 md:h-[30px] md:w-[30px]" />, text: 'Unlimited traffic at high speed' },
-                {
-                  icon: <MapPin className="h-6 w-6 md:h-[30px] md:w-[30px]" />,
-                  text: '20 countries for changing virtual location, including P2P',
-                },
-                {
-                  icon: <Cpu className="h-6 w-6 md:h-[30px] md:w-[30px]" />,
-                  text: 'Supports AmneziaWG 1.5 and XRay VLESS Reality protocols',
-                },
-                { icon: <Smartphone className="h-6 w-6 md:h-[30px] md:w-[30px]" />, text: 'Use up to 7 devices on one subscription' },
-                { icon: <Tv className="h-6 w-6 md:h-[30px] md:w-[30px]" />, text: 'Support for Android TV and routers' },
-                { icon: <Heart className="h-6 w-6 md:h-[30px] md:w-[30px]" />, text: '24/7 caring support' },
-              ]}
-            />
+            <div id="premium" className="scroll-mt-24">
+              <ProductCard
+                title="Amnezia"
+                accentWord="Premium"
+                accentClass="text-[#d10d90]"
+                subtitle="A classic VPN with strong privacy and region switching"
+                price="from 4.00 $ /month"
+                highlighted
+                onGet={handlePremiumGetClick}
+                isGetLoading={isPremiumPaymentLoading}
+                features={[
+                  { icon: <Globe className="h-6 w-6 md:h-[30px] md:w-[30px]" />, text: 'Access to any sites and apps' },
+                  { icon: <Download className="h-6 w-6 md:h-[30px] md:w-[30px]" />, text: 'Unlimited traffic at high speed' },
+                  {
+                    icon: <MapPin className="h-6 w-6 md:h-[30px] md:w-[30px]" />,
+                    text: '20 countries for changing virtual location, including P2P',
+                  },
+                  {
+                    icon: <Cpu className="h-6 w-6 md:h-[30px] md:w-[30px]" />,
+                    text: 'Supports AmneziaWG 1.5 and XRay VLESS Reality protocols',
+                  },
+                  { icon: <Smartphone className="h-6 w-6 md:h-[30px] md:w-[30px]" />, text: 'Use up to 7 devices on one subscription' },
+                  { icon: <Tv className="h-6 w-6 md:h-[30px] md:w-[30px]" />, text: 'Support for Android TV and routers' },
+                  { icon: <Heart className="h-6 w-6 md:h-[30px] md:w-[30px]" />, text: '24/7 caring support' },
+                ]}
+              />
+            </div>
 
-            <ProductCard
-              title="Amnezia"
-              accentWord="Free"
-              accentClass="text-[#0f68ff]"
-              subtitle="Free VPN for countries with active content blocking"
-              price="0 $ /month"
-              features={[
-                {
-                  icon: <Globe className="h-6 w-6 md:h-[30px] md:w-[30px]" />,
-                  text: 'Access to Instagram, Facebook, X (Twitter) and many more, but no YouTube',
-                },
-                { icon: <Download className="h-6 w-6 md:h-[30px] md:w-[30px]" />, text: 'Speed limited up to 8 Mbps' },
-                { icon: <Ban className="h-6 w-6 md:h-[30px] md:w-[30px]" />, text: 'No location selection' },
-                { icon: <Cpu className="h-6 w-6 md:h-[30px] md:w-[30px]" />, text: 'Supports AmneziaWG 1.5 protocol' },
-              ]}
-            />
+            <div id="free" className="scroll-mt-24">
+              <ProductCard
+                title="Amnezia"
+                accentWord="Free"
+                accentClass="text-[#0f68ff]"
+                subtitle="Free VPN for countries with active content blocking"
+                price="0 $ /month"
+                features={[
+                  {
+                    icon: <Globe className="h-6 w-6 md:h-[30px] md:w-[30px]" />,
+                    text: 'Access to Instagram, Facebook, X (Twitter) and many more, but no YouTube',
+                  },
+                  { icon: <Download className="h-6 w-6 md:h-[30px] md:w-[30px]" />, text: 'Speed limited up to 8 Mbps' },
+                  { icon: <Ban className="h-6 w-6 md:h-[30px] md:w-[30px]" />, text: 'No location selection' },
+                  { icon: <Cpu className="h-6 w-6 md:h-[30px] md:w-[30px]" />, text: 'Supports AmneziaWG 1.5 protocol' },
+                ]}
+              />
+            </div>
           </div>
 
-          <div className="mt-6 rounded-[20px] border border-[#192331] bg-[#050910] px-5 py-6 sm:px-7 sm:py-8 md:px-12 md:py-12">
+          <div id="self-hosted" className="mt-6 scroll-mt-24 rounded-[20px] border border-[#192331] bg-[#050910] px-5 py-6 sm:px-7 sm:py-8 md:px-12 md:py-12">
             <div className="mx-auto flex max-w-[680px] flex-col items-center text-center">
               <img src={logoSymbol} alt="Amnezia symbol" className="h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24" />
               <h3 className="mt-4 text-[32px] font-bold leading-[1.06] text-[#ebedf2] sm:mt-5 sm:text-[40px] md:text-[48px]">Amnezia Self-hosted</h3>
@@ -305,7 +425,7 @@ function App() {
             </div>
           </div>
 
-          <div className="mt-6 grid overflow-hidden rounded-[20px] border border-[#192331] bg-[#050910] lg:grid-cols-[1fr_1.15fr]">
+          <div id="business" className="mt-6 grid scroll-mt-24 overflow-hidden rounded-[20px] border border-[#192331] bg-[#050910] lg:grid-cols-[1fr_1.15fr]">
             <div className="p-5 sm:p-6 md:p-12">
               <h3 className="text-[24px] font-bold text-[#f0f2f6] md:text-[32px]">
                 Amnezia <span className="text-[#0067ff]">Business</span>
@@ -333,7 +453,7 @@ function App() {
         <section id="promotions" className="mt-20 scroll-mt-24">
           <SectionHeading label="NEWS & PROMOTIONS" />
           <div className="mt-8 grid gap-4 md:grid-cols-3">
-            <article className="rounded-[20px] border border-[#1a2433] bg-[#171d29] p-5 sm:p-6 md:p-8">
+            <article id="switch-discount" className="scroll-mt-24 rounded-[20px] border border-[#1a2433] bg-[#171d29] p-5 sm:p-6 md:p-8">
               <img src={change50Image} alt="50 percent discount" className="w-[72%] max-w-[240px] object-contain" />
               <h3 className="mt-6 text-[20px] font-medium leading-[1.2] text-[#edf0f5] sm:text-[22px] md:mt-8 md:text-[24px] lg:text-[28px]">Bought another VPN and it stopped working?</h3>
               <p className="mt-4 text-[16px] leading-[1.5] text-[#98a0af] sm:text-[18px] md:text-[22px]">Switch to Amnezia Premium with a 50% discount</p>
@@ -420,7 +540,7 @@ function App() {
             title="Amnezia Blog"
             align="left"
             action={
-              <a href="#blog" className="inline-flex items-center gap-2 text-[16px] font-semibold text-[#f3ab60] transition hover:text-[#ffc987] sm:text-[20px]">
+              <a href="/blog" className="inline-flex items-center gap-2 text-[16px] font-semibold text-[#f3ab60] transition hover:text-[#ffc987] sm:text-[20px]">
                 All articles
                 <img src={arrowRight} alt="" className="h-6 w-6" />
               </a>
@@ -488,7 +608,7 @@ function App() {
           </div>
         </section>
 
-        <Footer logo={logoMain} googlePlay={googlePlayBadge} appStore={appStoreBadge} />
+        <Footer logo={logoMain} />
       </main>
 
       {premiumPaymentError ? (

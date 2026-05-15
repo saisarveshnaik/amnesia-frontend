@@ -17,13 +17,13 @@ type AuthModalMode = 'login' | 'register'
 
 function Navbar({ logo, githubIcon, langIcon, chevronDown }: NavbarProps) {
   const navItems = [
-    { label: 'Products', href: '#products', color: 'hover:text-[#ff4fa8]' },
-    { label: 'Promotions', href: '#promotions', color: 'hover:text-[#f3ad62]' },
-    { label: 'Downloads', href: '#downloads', color: 'hover:text-[#37d6a3]' },
-    { label: 'Security', href: '#security', color: 'hover:text-[#5aa8ff]' },
-    { label: 'Blog', href: '#blog', color: 'hover:text-[#c277ff]' },
-    { label: 'FAQ', href: '#faq', color: 'hover:text-[#f3ad62]' },
-    { label: 'Press', href: '#press', color: 'hover:text-[#37d6a3]' },
+    { label: 'Products', href: '/#products', color: 'hover:text-[#ff4fa8]' },
+    { label: 'Promotions', href: '/#promotions', color: 'hover:text-[#f3ad62]' },
+    { label: 'Downloads', href: '/#downloads', color: 'hover:text-[#37d6a3]' },
+    { label: 'Security', href: '/#security', color: 'hover:text-[#5aa8ff]' },
+    { label: 'Blog', href: '/blog', color: 'hover:text-[#c277ff]' },
+    { label: 'FAQ', href: '/#faq', color: 'hover:text-[#f3ad62]' },
+    { label: 'Press', href: '/#press', color: 'hover:text-[#37d6a3]' },
   ]
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [authModalMode, setAuthModalMode] = useState<AuthModalMode | null>(null)
@@ -221,7 +221,7 @@ function Navbar({ logo, githubIcon, langIcon, chevronDown }: NavbarProps) {
     <>
       <header className="sticky top-0 z-40 border-b border-[#172235] bg-[#05080f]/88 shadow-[0_12px_40px_rgba(0,0,0,0.22)] backdrop-blur-xl">
         <div className="mx-auto flex h-16 w-full max-w-[2200px] items-center justify-between px-[15px] md:px-[30px] xl:px-[70px]">
-          <a href="#home" className="inline-flex items-center">
+          <a href="/#home" className="inline-flex items-center">
             <img src={logo} alt="Amnezia" className="h-[28px] w-auto" />
           </a>
 
@@ -397,7 +397,7 @@ function Navbar({ logo, githubIcon, langIcon, chevronDown }: NavbarProps) {
                         value={loginEmail}
                         onChange={(event) => setLoginEmail(event.target.value)}
                         className={inputClassName}
-                        placeholder="you@example.com"
+                        placeholder="you@amneziavpnservice.org"
                         autoComplete="email"
                       />
                     </label>
@@ -458,7 +458,7 @@ function Navbar({ logo, githubIcon, langIcon, chevronDown }: NavbarProps) {
                         value={registerEmail}
                         onChange={(event) => setRegisterEmail(event.target.value)}
                         className={inputClassName}
-                        placeholder="you@example.com"
+                        placeholder="you@amneziavpnservice.org"
                         autoComplete="email"
                       />
                     </label>
