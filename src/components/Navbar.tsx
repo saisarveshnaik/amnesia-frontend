@@ -27,7 +27,18 @@ function Navbar({ logo, githubIcon, langIcon, chevronDown }: NavbarProps) {
   ]
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [authModalMode, setAuthModalMode] = useState<AuthModalMode | null>(null)
-  const [currentUser, setCurrentUser] = useState<AuthUser | null>(null)
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(() => {
+    const token = localStorage.getItem(AUTH_TOKEN_KEY)
+    const user = getStoredUser()
+
+    if (token && user) {
+      return user
+    }
+
+    localStorage.removeItem(AUTH_TOKEN_KEY)
+    localStorage.removeItem(AUTH_USER_KEY)
+    return null
+  })
   const [isLoginLoading, setIsLoginLoading] = useState(false)
   const [isRegisterLoading, setIsRegisterLoading] = useState(false)
   const [loginEmail, setLoginEmail] = useState('')
@@ -39,19 +50,6 @@ function Navbar({ logo, githubIcon, langIcon, chevronDown }: NavbarProps) {
   const [loginError, setLoginError] = useState('')
   const [loginInfo, setLoginInfo] = useState('')
   const [registerError, setRegisterError] = useState('')
-
-  useEffect(() => {
-    const token = localStorage.getItem(AUTH_TOKEN_KEY)
-    const user = getStoredUser()
-
-    if (token && user) {
-      setCurrentUser(user)
-      return
-    }
-
-    localStorage.removeItem(AUTH_TOKEN_KEY)
-    localStorage.removeItem(AUTH_USER_KEY)
-  }, [])
 
   useEffect(() => {
     const handleOpenLogin = () => {
@@ -221,8 +219,9 @@ function Navbar({ logo, githubIcon, langIcon, chevronDown }: NavbarProps) {
     <>
       <header className="sticky top-0 z-40 border-b border-[#172235] bg-[#05080f]/88 shadow-[0_12px_40px_rgba(0,0,0,0.22)] backdrop-blur-xl">
         <div className="mx-auto flex h-16 w-full max-w-[2200px] items-center justify-between px-[15px] md:px-[30px] xl:px-[70px]">
-          <a href="/#home" className="inline-flex items-center">
-            <img src={logo} alt="Amnezia" className="h-[28px] w-auto" />
+          <a href="/#home" className="inline-flex items-center gap-2.5">
+            <img src={logo} alt="" className="h-10 w-10 object-contain" />
+            <span className="text-[15px] font-bold leading-tight text-[#eef2f7] sm:text-[17px]">Sunhill Secure VPN</span>
           </a>
 
           <nav className="hidden items-center gap-1 rounded-full border border-[#162033] bg-[#07101c]/82 px-2 py-1 xl:flex">
@@ -397,7 +396,7 @@ function Navbar({ logo, githubIcon, langIcon, chevronDown }: NavbarProps) {
                         value={loginEmail}
                         onChange={(event) => setLoginEmail(event.target.value)}
                         className={inputClassName}
-                        placeholder="you@amneziavpnservice.org"
+                        placeholder="you@sunhillservices.com"
                         autoComplete="email"
                       />
                     </label>
@@ -458,7 +457,7 @@ function Navbar({ logo, githubIcon, langIcon, chevronDown }: NavbarProps) {
                         value={registerEmail}
                         onChange={(event) => setRegisterEmail(event.target.value)}
                         className={inputClassName}
-                        placeholder="you@amneziavpnservice.org"
+                        placeholder="you@sunhillservices.com"
                         autoComplete="email"
                       />
                     </label>

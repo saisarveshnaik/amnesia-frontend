@@ -27,7 +27,7 @@ function BlogCard({ title, tags, date, readingTime, image, imageAlt, compact = f
             <span
               key={tag}
               className={`rounded-full border px-2.5 py-1 text-[12px] font-medium leading-none ${
-                tag === 'Amnezia News' || tag === 'Recommended'
+                tag === 'Sunhill News' || tag === 'Recommended'
                   ? 'border-[#f3a854] text-[#f3a854]'
                   : 'border-[#404554] text-[#d2d5db]'
               }`}

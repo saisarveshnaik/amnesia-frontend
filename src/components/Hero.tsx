@@ -15,7 +15,7 @@ function Hero({ image, arrowRight }: HeroProps) {
             a name
           </h1>
           <p className="mt-6 max-w-[500px] text-[16px] leading-[1.5] text-[#9aa2b0] md:text-[22px]">
-            Connect to Amnezia services or create your own private VPN in just a few steps
+            Connect to Sunhill Secure VPN in just a few steps
           </p>
           <a
             href="#products"
@@ -29,7 +29,7 @@ function Hero({ image, arrowRight }: HeroProps) {
         <div className="relative flex justify-center lg:justify-end">
           <img
             src={image}
-            alt="Amnezia app on a phone"
+            alt="Sunhill Secure VPN app on a phone"
             className="w-full max-w-[610px] rounded-[20px] object-contain sm:rounded-[24px] lg:max-w-[700px] lg:rounded-[28px]"
           />
         </div>
