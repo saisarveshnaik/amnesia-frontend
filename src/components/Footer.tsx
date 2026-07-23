@@ -29,8 +29,6 @@ function Footer({ logo }: FooterProps) {
           <ul className="mt-3 space-y-2">
             <li><a className={footerLinkClass} href="/sunhillwg">SunhillWG</a></li>
             <li><a className={footerLinkClass} href="/about">About us</a></li>
-            <li><a className={footerLinkClass} href="/premium-discount">Switch to Premium with a 50% discount</a></li>
-            <li><a className={footerLinkClass} href="/blog">Blog</a></li>
           </ul>
         </div>
 

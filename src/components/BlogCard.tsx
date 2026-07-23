@@ -2,6 +2,7 @@ import { Calendar, Clock3 } from 'lucide-react'
 
 type BlogCardProps = {
   title: string
+  description?: string
   tags: string[]
   date?: string
   readingTime?: string
@@ -10,7 +11,7 @@ type BlogCardProps = {
   compact?: boolean
 }
 
-function BlogCard({ title, tags, date, readingTime, image, imageAlt, compact = false }: BlogCardProps) {
+function BlogCard({ title, description, tags, date, readingTime, image, imageAlt, compact = false }: BlogCardProps) {
   return (
     <article
       className={`rounded-[22px] border border-[#1b2231] bg-[#171d2a] ${
@@ -43,6 +44,9 @@ function BlogCard({ title, tags, date, readingTime, image, imageAlt, compact = f
         >
           {title}
         </h3>
+        {description ? (
+          <p className="mt-4 max-w-[560px] text-[16px] leading-[1.5] text-[#919aa8] sm:text-[17px] md:mt-5 md:text-[19px]">{description}</p>
+        ) : null}
         {date && readingTime ? (
           <div className="mt-4 flex flex-wrap items-center gap-3 text-[13px] text-[#8f97a5] sm:mt-5 sm:gap-5">
             <span className="inline-flex items-center gap-1.5">

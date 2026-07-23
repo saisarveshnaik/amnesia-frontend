@@ -5,6 +5,7 @@ import {
   Download,
   Globe,
   Heart,
+  Loader2,
   MapPin,
   Smartphone,
   Tv,
@@ -20,7 +21,14 @@ import Navbar from './components/Navbar'
 import ProductCard from './components/ProductCard'
 import SectionHeading from './components/SectionHeading'
 import { getAuthToken, getStoredUser } from './auth/storage'
-import { createPremiumPayment, getPaymentStatus, storeCompletedPayment } from './api/paymentApi'
+import {
+  createBusinessPayment,
+  createPremiumPayment,
+  getFreeSubscriptionStatus,
+  getPaymentStatus,
+  storeCompletedPayment,
+  subscribeFreePlan,
+} from './api/paymentApi'
 
 import githubIcon from '../assets/afc75747-a67c-450e-84ae-3f63f45e01cc.svg'
 import languageIcon from '../assets/2b6a48d4-db47-4003-ab9f-da7cdd74e5da.svg'
@@ -33,8 +41,6 @@ import heroImage from '../assets/sunhill-secure-hero.webp'
 import businessImage from '../assets/image.jpeg'
 import phonePromoImage from '../assets/sunhill-secure-app.webp'
 import blogFeatureImage from '../assets/image_1.jpeg'
-import blogIranImage from '../assets/image_33.jpeg'
-import blogAwgImage from '../assets/image_20.jpeg'
 import change50Image from '../assets/change50.bbe39ade.webp'
 import awgGlowImage from '../assets/sunhillwg.webp'
 import wgV2Image from '../assets/sunhillwg-v2.webp'
@@ -125,8 +131,18 @@ function App() {
   const [premiumPaymentError, setPremiumPaymentError] = useState('')
   const [paymentCheckoutUrl, setPaymentCheckoutUrl] = useState('')
   const [vpnCode, setVpnCode] = useState('')
+  const [vpnCodePlan, setVpnCodePlan] = useState<'premium' | 'free' | 'business'>('premium')
   const [isCopyingCode, setIsCopyingCode] = useState(false)
+  const [isFreeLoading, setIsFreeLoading] = useState(false)
+  const [freeLoadingStage, setFreeLoadingStage] = useState<'authenticating' | 'subscribing'>('authenticating')
+  const [freeSubscriptionError, setFreeSubscriptionError] = useState('')
+  const [isFreeSubscribed, setIsFreeSubscribed] = useState(false)
+  const [freeVpnCode, setFreeVpnCode] = useState('')
+  const [isBusinessPaymentLoading, setIsBusinessPaymentLoading] = useState(false)
+  const [businessPaymentError, setBusinessPaymentError] = useState('')
+  const [businessCheckoutUrl, setBusinessCheckoutUrl] = useState('')
   const paymentFlowIdRef = useRef(0)
+  const businessPaymentFlowIdRef = useRef(0)
   const currentPath = window.location.pathname.toLowerCase()
   const isPaymentReturnPage = currentPath === '/premium-payment-success' || currentPath === '/premium-payment-failure'
 
@@ -141,6 +157,34 @@ function App() {
 
     return () => {
       window.clearTimeout(closeTimer)
+    }
+  }, [isPaymentReturnPage])
+
+  useEffect(() => {
+    if (isPaymentReturnPage) {
+      return
+    }
+
+    const token = getAuthToken()
+    const user = getStoredUser()
+
+    if (!token || !user) {
+      return
+    }
+
+    let cancelled = false
+
+    getFreeSubscriptionStatus(token)
+      .then((statusData) => {
+        if (!cancelled && statusData.subscribed) {
+          setIsFreeSubscribed(true)
+          setFreeVpnCode(statusData.vpnCode)
+        }
+      })
+      .catch(() => {})
+
+    return () => {
+      cancelled = true
     }
   }, [isPaymentReturnPage])
 
@@ -174,26 +218,6 @@ function App() {
                   tags={['Articles', 'Free']}
                   image={blogFeatureImage}
                   imageAlt="Split tunneling article"
-                />
-              </div>
-              <div className="mt-4 grid gap-4 md:grid-cols-2">
-                <BlogCard
-                  compact
-                  title="Internet Censorship in Iran: Trends and Outlook for 2026"
-                  tags={['Articles', 'Iran']}
-                  date="Apr 03"
-                  readingTime="5 min"
-                  image={blogIranImage}
-                  imageAlt="Iran article"
-                />
-                <BlogCard
-                  compact
-                  title="SunhillWG 2.0 is here"
-                  tags={['Sunhill News', 'Recommended']}
-                  date="Mar 25"
-                  readingTime="2 min"
-                  image={blogAwgImage}
-                  imageAlt="SunhillWG 2.0 article"
                 />
               </div>
             </section>
@@ -285,6 +309,7 @@ function App() {
 
       const storedPayment = await storeCompletedPayment(token, paymentData.transactionId)
       setVpnCode(storedPayment.vpnCode)
+      setVpnCodePlan('premium')
       setPaymentCheckoutUrl('')
     } catch (error) {
       if (paymentFlowIdRef.current === flowId) {
@@ -296,6 +321,112 @@ function App() {
       if (paymentFlowIdRef.current === flowId) {
         setIsPremiumPaymentLoading(false)
       }
+    }
+  }
+
+  const handleBusinessGetClick = async () => {
+    const token = getAuthToken()
+    const user = getStoredUser()
+
+    if (!token || !user) {
+      window.dispatchEvent(new Event('amnesia:open-login'))
+      return
+    }
+
+    setBusinessPaymentError('')
+    setIsBusinessPaymentLoading(true)
+    const flowId = businessPaymentFlowIdRef.current + 1
+    businessPaymentFlowIdRef.current = flowId
+
+    try {
+      const paymentData = await createBusinessPayment(token)
+
+      if (businessPaymentFlowIdRef.current !== flowId) {
+        return
+      }
+
+      setBusinessCheckoutUrl(paymentData.checkoutUrl)
+
+      const startTime = Date.now()
+      const timeoutMs = 5 * 60 * 1000
+      const terminalStatuses = new Set(['completed', 'failed', 'refunded', 'cancelled', 'canceled'])
+      let latestStatus = paymentData.status.toLowerCase()
+
+      while (Date.now() - startTime < timeoutMs) {
+        await new Promise((resolve) => setTimeout(resolve, 4000))
+
+        if (businessPaymentFlowIdRef.current !== flowId) {
+          return
+        }
+
+        const statusData = await getPaymentStatus(token, paymentData.transactionId)
+        latestStatus = statusData.status.toLowerCase()
+
+        if (terminalStatuses.has(latestStatus)) {
+          break
+        }
+      }
+
+      if (businessPaymentFlowIdRef.current !== flowId) {
+        return
+      }
+
+      if (latestStatus !== 'completed') {
+        throw new Error(
+          latestStatus
+            ? `Payment did not complete. Current status: ${latestStatus}.`
+            : 'Payment did not complete within the expected time.',
+        )
+      }
+
+      const storedPayment = await storeCompletedPayment(token, paymentData.transactionId)
+      setVpnCode(storedPayment.vpnCode)
+      setVpnCodePlan('business')
+      setBusinessCheckoutUrl('')
+    } catch (error) {
+      if (businessPaymentFlowIdRef.current === flowId) {
+        const message = error instanceof Error ? error.message : 'Unable to complete payment. Please try again.'
+        setBusinessPaymentError(message)
+        setBusinessCheckoutUrl('')
+      }
+    } finally {
+      if (businessPaymentFlowIdRef.current === flowId) {
+        setIsBusinessPaymentLoading(false)
+      }
+    }
+  }
+
+  const handleCloseBusinessPaymentPopup = () => {
+    businessPaymentFlowIdRef.current += 1
+    setBusinessCheckoutUrl('')
+    setIsBusinessPaymentLoading(false)
+  }
+
+  const handleFreeGetClick = async () => {
+    const token = getAuthToken()
+    const user = getStoredUser()
+
+    if (!token || !user) {
+      window.dispatchEvent(new Event('amnesia:open-login'))
+      return
+    }
+
+    setFreeSubscriptionError('')
+    setFreeLoadingStage('authenticating')
+    setIsFreeLoading(true)
+
+    try {
+      setFreeLoadingStage('subscribing')
+      const subscription = await subscribeFreePlan(token)
+      setFreeVpnCode(subscription.vpnCode)
+      setIsFreeSubscribed(true)
+      setVpnCode(subscription.vpnCode)
+      setVpnCodePlan('free')
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unable to subscribe to the Free plan. Please try again.'
+      setFreeSubscriptionError(message)
+    } finally {
+      setIsFreeLoading(false)
     }
   }
 
@@ -370,6 +501,13 @@ function App() {
                 accentClass="text-[#0f68ff]"
                 subtitle="Free VPN for countries with active content blocking"
                 price="0 $ /month"
+                onGet={handleFreeGetClick}
+                isGetLoading={isFreeLoading}
+                isSubscribed={isFreeSubscribed}
+                onViewCode={() => {
+                  setVpnCode(freeVpnCode)
+                  setVpnCodePlan('free')
+                }}
                 features={[
                   {
                     icon: <Globe className="h-6 w-6 md:h-[30px] md:w-[30px]" />,
@@ -394,9 +532,11 @@ function App() {
               <div className="mt-7 flex flex-col items-start gap-3 sm:mt-10 sm:flex-row sm:items-center sm:gap-5">
                 <button
                   type="button"
-                  className="inline-flex h-11 w-full items-center justify-center rounded-[12px] border border-[#f4ad61] px-6 text-[18px] font-bold text-[#f4ad61] transition hover:bg-[#f4ad61]/10 sm:h-12 sm:w-auto sm:min-w-36 sm:text-[20px]"
+                  onClick={handleBusinessGetClick}
+                  disabled={isBusinessPaymentLoading}
+                  className="inline-flex h-11 w-full items-center justify-center rounded-[12px] border border-[#f4ad61] px-6 text-[18px] font-bold text-[#f4ad61] transition hover:bg-[#f4ad61]/10 disabled:cursor-not-allowed disabled:opacity-75 sm:h-12 sm:w-auto sm:min-w-36 sm:text-[20px]"
                 >
-                  Get
+                  {isBusinessPaymentLoading ? 'Processing...' : 'Get'}
                 </button>
                 <span className="text-[18px] text-[#9ea6b4] sm:text-[20px] md:text-[22px]">8$ month per user</span>
               </div>
@@ -480,7 +620,7 @@ function App() {
           />
           <FeatureCard
             title="Top-level security"
-            description="The VPN technology has successfully passed independent security audits conducted by 7ASecurity."
+            description="The VPN technology has successfully passed independent security audits conducted by 7ASecurity. These assessments validate the robustness of its security architecture, encryption implementation, and resistance to common attack vectors. Regular third-party audits help ensure that the platform continues to meet high security standards and follows industry best practices for protecting user data and privacy."
             image={securityBadgeImage}
             imageAlt="Audited by 7ASecurity"
             centered
@@ -502,30 +642,10 @@ function App() {
           <div className="mt-6">
             <BlogCard
               title="Split tunneling: what it is and why you need it"
+              description="Split tunneling allows you to choose which apps or websites use the VPN connection and which access the internet directly. This helps optimize performance by routing only sensitive or privacy-critical traffic through the VPN while reducing bandwidth usage for other activities. It also enables seamless access to local network devices and region-specific services without disconnecting from the VPN, offering greater flexibility and convenience."
               tags={['Articles', 'Free']}
               image={blogFeatureImage}
               imageAlt="Split tunneling article"
-            />
-          </div>
-
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
-            <BlogCard
-              compact
-              title="Internet Censorship in Iran: Trends and Outlook for 2026"
-              tags={['Articles', 'Iran']}
-              date="Apr 03"
-              readingTime="5 min"
-              image={blogIranImage}
-              imageAlt="Iran article"
-            />
-            <BlogCard
-              compact
-              title="SunhillWG 2.0 is here"
-              tags={['Sunhill News', 'Recommended']}
-              date="Mar 25"
-              readingTime="2 min"
-              image={blogAwgImage}
-              imageAlt="SunhillWG 2.0 article"
             />
           </div>
         </section>
@@ -569,6 +689,21 @@ function App() {
         </div>
       ) : null}
 
+      {freeSubscriptionError ? (
+        <div className="fixed inset-x-4 bottom-4 z-50 mx-auto max-w-[560px] rounded-xl border border-[#5f2b35] bg-[#2a1219] px-4 py-3 text-[14px] text-[#ffc4d2] shadow-[0_16px_40px_rgba(0,0,0,0.45)]">
+          {freeSubscriptionError}
+        </div>
+      ) : null}
+
+      {isFreeLoading ? (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-[#02040a]/85 backdrop-blur-sm">
+          <Loader2 className="h-10 w-10 animate-spin text-[#f4ad61]" />
+          <p className="text-[16px] font-medium text-[#e4e8ef]">
+            {freeLoadingStage === 'authenticating' ? 'Authenticating...' : 'Subscribing you to the Free plan...'}
+          </p>
+        </div>
+      ) : null}
+
       {paymentCheckoutUrl ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#02040a]/80 p-4 backdrop-blur-sm">
           <div className="flex h-[min(760px,calc(100vh-32px))] w-full max-w-[480px] flex-col overflow-hidden rounded-[20px] border border-[#1a2434] bg-[#050910] shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
@@ -596,11 +731,47 @@ function App() {
         </div>
       ) : null}
 
+      {businessPaymentError ? (
+        <div className="fixed inset-x-4 bottom-4 z-50 mx-auto max-w-[560px] rounded-xl border border-[#5f2b35] bg-[#2a1219] px-4 py-3 text-[14px] text-[#ffc4d2] shadow-[0_16px_40px_rgba(0,0,0,0.45)]">
+          {businessPaymentError}
+        </div>
+      ) : null}
+
+      {businessCheckoutUrl ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#02040a]/80 p-4 backdrop-blur-sm">
+          <div className="flex h-[min(760px,calc(100vh-32px))] w-full max-w-[480px] flex-col overflow-hidden rounded-[20px] border border-[#1a2434] bg-[#050910] shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
+            <div className="flex items-center justify-between border-b border-[#172234] px-4 py-3">
+              <div>
+                <h3 className="text-[18px] font-bold text-[#eef1f6]">Complete payment</h3>
+                <p className="mt-0.5 text-[13px] text-[#9ea7b6]">Sunhill Secure VPN Business</p>
+              </div>
+              <button
+                type="button"
+                aria-label="Close payment popup"
+                onClick={handleCloseBusinessPaymentPopup}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[#aeb7c5] transition hover:bg-[#101827] hover:text-white"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <iframe
+              src={businessCheckoutUrl}
+              title="KiwiPayment checkout"
+              className="min-h-0 flex-1 border-0 bg-white"
+              allow="payment *"
+            />
+          </div>
+        </div>
+      ) : null}
+
       {vpnCode ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#02040a]/80 p-4 backdrop-blur-sm">
           <div className="w-full max-w-[460px] rounded-[20px] border border-[#1a2434] bg-[#050910] p-6 shadow-[0_24px_60px_rgba(0,0,0,0.45)] md:p-7">
             <h3 className="text-[28px] font-bold text-[#eef1f6]">Your VPN code</h3>
-            <p className="mt-3 text-[15px] text-[#b8c1d1]">Use this code to activate your Sunhill Secure VPN Premium access.</p>
+            <p className="mt-3 text-[15px] text-[#b8c1d1]">
+              Use this code to activate your Sunhill Secure VPN{' '}
+              {vpnCodePlan === 'free' ? 'Free' : vpnCodePlan === 'business' ? 'Business' : 'Premium'} access.
+            </p>
             <div className="mt-5 rounded-[12px] border border-[#243249] bg-[#0b111d] px-4 py-3 text-[20px] font-bold tracking-[0.04em] text-[#f4ad61]">
               {vpnCode}
             </div>
@@ -617,6 +788,7 @@ function App() {
                 onClick={() => {
                   setVpnCode('')
                   setPremiumPaymentError('')
+                  setBusinessPaymentError('')
                 }}
                 className="inline-flex h-11 flex-1 items-center justify-center rounded-[12px] border border-[#2b3547] text-[15px] font-semibold text-[#e4e8ef] transition hover:border-[#f1b162] hover:text-[#f1b162]"
               >

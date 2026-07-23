@@ -28,6 +28,19 @@ export type StoredPaymentResponse = {
   vpnCode: string
 }
 
+export type FreeSubscriptionResponse = {
+  transactionId: string
+  status: string
+  amount: number
+  currency: string
+  vpnCode: string
+}
+
+export type FreeSubscriptionStatusResponse = {
+  subscribed: boolean
+  vpnCode: string
+}
+
 const FALLBACK_ERROR_MESSAGE = 'Unable to process payment request. Please try again.'
 
 const callPaymentApi = async <T>(url: string, token: string, options: RequestInit = {}): Promise<T> => {
@@ -67,6 +80,14 @@ export const createPremiumPayment = (token: string) =>
     body: JSON.stringify({}),
   })
 
+export const BUSINESS_AMOUNT_PER_USER = 8
+
+export const createBusinessPayment = (token: string) =>
+  callPaymentApi<CreatePaymentResponse>(PAYMENT_ENDPOINTS.create, token, {
+    method: 'POST',
+    body: JSON.stringify({ amount: BUSINESS_AMOUNT_PER_USER, currency: 'USD', product: 'amnezia_business' }),
+  })
+
 export const getPaymentStatus = (token: string, transactionId: string) =>
   callPaymentApi<PaymentStatusResponse>(PAYMENT_ENDPOINTS.status(transactionId), token)
 
@@ -75,3 +96,12 @@ export const storeCompletedPayment = (token: string, transactionId: string) =>
     method: 'POST',
     body: JSON.stringify({ transactionId }),
   })
+
+export const subscribeFreePlan = (token: string) =>
+  callPaymentApi<FreeSubscriptionResponse>(PAYMENT_ENDPOINTS.freeSubscribe, token, {
+    method: 'POST',
+    body: JSON.stringify({}),
+  })
+
+export const getFreeSubscriptionStatus = (token: string) =>
+  callPaymentApi<FreeSubscriptionStatusResponse>(PAYMENT_ENDPOINTS.freeStatus, token)

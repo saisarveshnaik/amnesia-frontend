@@ -10,6 +10,8 @@ type ProductCardProps = {
   highlighted?: boolean
   onGet?: () => void
   isGetLoading?: boolean
+  isSubscribed?: boolean
+  onViewCode?: () => void
 }
 
 function ProductCard({
@@ -22,6 +24,8 @@ function ProductCard({
   highlighted = false,
   onGet,
   isGetLoading = false,
+  isSubscribed = false,
+  onViewCode,
 }: ProductCardProps) {
   return (
     <article
@@ -37,18 +41,29 @@ function ProductCard({
       <p className="mt-4 text-[17px] font-normal leading-[1.45] text-[#c9ced8] sm:text-[19px] md:text-[22px] lg:text-[24px]">{subtitle}</p>
       <p className="mt-5 text-[21px] font-medium tracking-[-0.02em] text-[#e4e6eb] sm:text-[24px]">{price}</p>
 
-      <button
-        type="button"
-        onClick={onGet}
-        disabled={isGetLoading}
-        className={`mt-6 inline-flex h-11 w-full items-center justify-center rounded-[12px] border text-[18px] font-bold transition sm:mt-7 sm:h-12 sm:text-[20px] ${
-          highlighted
-            ? 'border-[#f4ad61] bg-[#f4ad61] text-[#24170a] shadow-[0_0_22px_rgba(255,170,90,0.24)] hover:bg-[#ffc27b]'
-            : 'border-[#f4ad61] text-[#f5b56d] hover:bg-[#f4ad61]/10'
-        } disabled:cursor-not-allowed disabled:opacity-75`}
-      >
-        {isGetLoading ? 'Processing...' : 'Get'}
-      </button>
+      {isSubscribed ? (
+        <div className="mt-6 flex h-11 w-full items-center justify-between rounded-[12px] border border-[#2f7d52] bg-[#0f2419] px-4 text-[15px] font-semibold text-[#5fe3a0] sm:mt-7 sm:h-12 sm:text-[16px]">
+          <span>Subscribed</span>
+          {onViewCode ? (
+            <button type="button" onClick={onViewCode} className="font-bold text-[#f5b56d] underline-offset-2 hover:underline">
+              View code
+            </button>
+          ) : null}
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={onGet}
+          disabled={isGetLoading}
+          className={`mt-6 inline-flex h-11 w-full items-center justify-center rounded-[12px] border text-[18px] font-bold transition sm:mt-7 sm:h-12 sm:text-[20px] ${
+            highlighted
+              ? 'border-[#f4ad61] bg-[#f4ad61] text-[#24170a] shadow-[0_0_22px_rgba(255,170,90,0.24)] hover:bg-[#ffc27b]'
+              : 'border-[#f4ad61] text-[#f5b56d] hover:bg-[#f4ad61]/10'
+          } disabled:cursor-not-allowed disabled:opacity-75`}
+        >
+          {isGetLoading ? 'Processing...' : 'Get'}
+        </button>
+      )}
 
       <ul className="mt-7 space-y-4 sm:mt-8">
         {features.map((feature) => (

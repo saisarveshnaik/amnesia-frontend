@@ -13,4 +13,6 @@ export const PAYMENT_ENDPOINTS = {
   create: `${BASE_URL}/api/payments/create`,
   status: (transactionId: string) => `${BASE_URL}/api/payments/status/${encodeURIComponent(transactionId)}`,
   store: `${BASE_URL}/api/payments/store`,
+  freeSubscribe: `${BASE_URL}/api/payments/free`,
+  freeStatus: `${BASE_URL}/api/payments/free/status`,
 }
